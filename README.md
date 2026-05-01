@@ -6,6 +6,7 @@
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://chunav-saathi-mocha.vercel.app)
 [![PWA](https://img.shields.io/badge/PWA-Offline%20First-blue?style=for-the-badge)](https://chunav-saathi-mocha.vercel.app)
 [![Languages](https://img.shields.io/badge/Languages-मराठी%20|%20हिंदी%20|%20English-orange?style=for-the-badge)](https://chunav-saathi-mocha.vercel.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](./LICENSE)
 
 ---
 
