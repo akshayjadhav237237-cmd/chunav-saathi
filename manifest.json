@@ -1,0 +1,40 @@
+{
+  "name": "चुनाव साथी - Chunav Saathi",
+  "short_name": "चुनाव साथी",
+  "description": "Maharashtra rural voter education app | मतदान शिक्षण अॅप",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#004B87",
+  "background_color": "#F5F5F5",
+  "lang": "mr",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "government"],
+  "shortcuts": [
+    {
+      "name": "EVM Simulator",
+      "short_name": "EVM",
+      "url": "./?screen=evm",
+      "description": "Practice using the voting machine"
+    },
+    {
+      "name": "Quiz",
+      "short_name": "Quiz",
+      "url": "./?screen=quiz",
+      "description": "Test your knowledge"
+    }
+  ]
+}

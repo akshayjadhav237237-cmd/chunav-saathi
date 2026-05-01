@@ -1,0 +1,103 @@
+:root {
+  /* === BRAND COLORS === */
+  --eci-blue: #004B87;
+  --eci-blue-light: #E8F1F8;
+  --eci-blue-dark: #003366;
+  --eci-blue-mid: #1565C0;
+
+  /* === SEMANTIC ACTION COLORS === */
+  --action-green: #2E7D32;
+  --action-green-light: #E8F5E9;
+  --action-green-hover: #1B5E20;
+  --action-green-glow: rgba(46,125,50,0.25);
+
+  --warning-orange: #E65100;
+  --warning-orange-light: #FFF3E0;
+  --warning-orange-border: #FF8F00;
+
+  --neutral-grey: #616161;
+  --neutral-grey-light: #EEEEEE;
+  --neutral-grey-border: #BDBDBD;
+
+  /* === TRICOLOR ACCENTS === */
+  --tricolor-saffron: #FF9933;
+  --tricolor-green: #138808;
+  --tricolor-navy: #000080;
+
+  /* === BACKGROUND === */
+  --bg-page: #F0F4F8;
+  --bg-card: #FFFFFF;
+  --bg-overlay: rgba(0,0,0,0.45);
+
+  /* === TEXT === */
+  --text-primary: #1A1A2E;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  --text-white: #FFFFFF;
+  --text-on-green: #FFFFFF;
+  --text-on-blue: #FFFFFF;
+
+  /* === TYPOGRAPHY === */
+  --font-family: 'Noto Sans Devanagari', 'Noto Sans', system-ui, sans-serif;
+  --font-size-xs: 13px;
+  --font-size-sm: 15px;
+  --font-size-body: 18px;
+  --font-size-body-lg: 20px;
+  --font-size-header: 24px;
+  --font-size-hero: 28px;
+  --font-size-xl: 32px;
+  --font-size-2xl: 40px;
+
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height: 1.6;
+  --line-height-tight: 1.35;
+  --line-height-loose: 1.8;
+
+  /* === SPACING === */
+  --space-xs: 6px;
+  --space-sm: 10px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* === TOUCH TARGETS (min 60dp) === */
+  --touch-min: 60px;
+  --touch-comfortable: 72px;
+  --touch-gap: 10px;
+
+  /* === LAYOUT === */
+  --bottom-nav-height: 72px;
+  --top-bar-height: 60px;
+  --max-width: 500px;
+
+  /* === BORDERS === */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+  --border-width: 2px;
+
+  /* === SHADOWS === */
+  --shadow-sm: 0 2px 8px rgba(0,75,135,0.08);
+  --shadow-md: 0 4px 20px rgba(0,75,135,0.12);
+  --shadow-lg: 0 8px 32px rgba(0,75,135,0.18);
+  --shadow-green: 0 4px 20px rgba(46,125,50,0.30);
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+
+  /* === TRANSITIONS === */
+  --transition-fast: 120ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms cubic-bezier(0.4,0,0.2,1);
+
+  /* === Z-INDEX === */
+  --z-bottom-nav: 100;
+  --z-floating: 200;
+  --z-modal: 300;
+  --z-splash: 999;
+}
