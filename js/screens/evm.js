@@ -1,125 +1,210 @@
-// CHUNAV SAATHI — evm.js (REALISTIC REDESIGN)
+// CHUNAV SAATHI — evm.js (REALISTIC ECI EVM v3)
 let _evmSelected = null;
-let _evmVoted = false;
+let _evmVoted    = false;
 
 function renderEvm() {
   _evmSelected = null;
-  _evmVoted = false;
+  _evmVoted    = false;
   const lang = AppState.lang || 'mr';
   const candidates = t('evm_candidates');
   const el = document.getElementById('screen-evm');
 
   el.innerHTML = `
-    <div class="evm-wrapper">
+<div class="evm-wrap">
 
-      <!-- PRACTICE MODE BADGE -->
-      <div class="evm-practice-badge">🔴 सराव मोड / PRACTICE MODE</div>
+  <!-- PRACTICE BADGE -->
+  <div class="evm-practice-badge">🔴 सराव मोड / PRACTICE MODE</div>
 
-      <!-- BALLOT UNIT -->
-      <div class="evm-unit evm-ballot-unit">
-        <div class="evm-unit-label">BALLOT UNIT</div>
-        <div class="evm-ballot-header">
-          <div class="evm-ballot-title">भारत निवडणूक आयोग</div>
-          <div class="evm-ballot-subtitle">ELECTION COMMISSION OF INDIA</div>
-        </div>
-        <div class="evm-candidates-list">
-          ${candidates.map((c, i) => `
-            <div class="evm-row" id="evm-row-${i}">
-              <div class="evm-serial">${c.num}</div>
-              <div class="evm-candidate-info">
-                <div class="evm-candidate-symbol">${c.symbol}</div>
-                <div class="evm-candidate-name">${c.name}</div>
-                <div class="evm-party-name">${c.party}</div>
-              </div>
-              <div class="evm-indicator" id="evm-light-${i}"></div>
-              <button class="evm-vote-button" id="evm-btn-${i}"
-                onclick="evmPress(${i})" aria-label="Vote for ${c.name}">
-                VOTE
-              </button>
-            </div>`).join('')}
+  <!-- ═══════════ CONTROL UNIT ═══════════ -->
+  <div class="evm-machine evm-cu" id="evm-cu">
+    <div class="evm-machine-top-strip">
+      <span class="evm-led" id="evm-cu-led"></span>
+      <span class="evm-unit-lbl">CONTROL UNIT</span>
+    </div>
+
+    <div class="evm-cu-body">
+      <!-- LCD panel -->
+      <div class="evm-lcd-panel">
+        <div class="evm-lcd-screen" id="evm-lcd">
+          <div class="evm-lcd-val" id="evm-lcd-val">00</div>
+          <div class="evm-lcd-sub" id="evm-lcd-sub">READY</div>
         </div>
       </div>
 
-      <!-- CONTROL UNIT -->
-      <div class="evm-unit evm-control-unit">
-        <div class="evm-unit-label">CONTROL UNIT</div>
-        <div class="evm-lcd" id="evm-lcd">
-          <div class="evm-lcd-line1" id="evm-lcd-l1">मशीन तयार आहे</div>
-          <div class="evm-lcd-line2" id="evm-lcd-l2">READY</div>
+      <!-- Blue mid panel -->
+      <div class="evm-cu-blue-panel">
+        <div class="evm-cu-slots">
+          <div class="evm-slot"></div>
+          <div class="evm-slot"></div>
+          <div class="evm-slot"></div>
         </div>
-        <div class="evm-cu-buttons">
-          <div class="evm-cu-btn disabled">
-            <div class="evm-cu-btn-label">RESULT</div>
-            <div class="evm-cu-btn-note">Disabled</div>
+        <div class="evm-ballot-officer-btn">BALLOT</div>
+        <div class="evm-keyhole">🔑</div>
+      </div>
+
+      <!-- Bottom buttons -->
+      <div class="evm-cu-btns">
+        <div class="evm-cu-btn-disabled">RESULT</div>
+        <div class="evm-cu-btn-disabled">CLOSE</div>
+        <div class="evm-cu-sq-btn"></div>
+      </div>
+    </div>
+
+    <div class="evm-machine-bot-strip"></div>
+    <!-- Beep pulse -->
+    <div class="evm-beep-dot" id="evm-beep" style="display:none"></div>
+  </div>
+
+  <!-- ═══════════ BALLOT UNIT ═══════════ -->
+  <div class="evm-machine evm-bu" id="evm-bu">
+    <div class="evm-machine-top-strip">
+      <span class="evm-led evm-led-ready" id="evm-bu-led"></span>
+      <span class="evm-unit-lbl">BALLOT UNIT</span>
+    </div>
+
+    <div class="evm-bu-header">
+      <div class="evm-bu-title-mr">भारत निवडणूक आयोग</div>
+      <div class="evm-bu-title-en">ELECTION COMMISSION OF INDIA</div>
+    </div>
+
+    <!-- Candidate rows -->
+    <div class="evm-rows" id="evm-rows">
+      ${candidates.map((c, i) => `
+      <div class="evm-row" id="evm-row-${i}">
+        <div class="evm-row-num">${c.num}</div>
+        <div class="evm-row-info">
+          <div class="evm-row-symbol">${c.symbol}</div>
+          <div class="evm-row-text">
+            <div class="evm-row-name">${c.name}</div>
+            <div class="evm-row-party">${c.party}</div>
           </div>
-          <div class="evm-cu-btn disabled">
-            <div class="evm-cu-btn-label">CLOSE</div>
-            <div class="evm-cu-btn-note">Disabled</div>
-          </div>
         </div>
-        <div class="evm-beep-indicator" id="evm-beep" style="display:none"></div>
-      </div>
+        <div class="evm-row-dot" id="evm-dot-${i}"></div>
+        <button class="evm-row-btn" id="evm-btn-${i}"
+          onclick="evmPress(${i})"
+          aria-label="Vote for ${c.name}">
+        </button>
+      </div>`).join('')}
+    </div>
 
-      <!-- VVPAT UNIT -->
-      <div class="evm-unit evm-vvpat-unit">
-        <div class="evm-unit-label">VVPAT</div>
-        <div class="evm-vvpat-window" id="evm-vvpat-window">
-          <div class="evm-vvpat-glass">
-            <div class="evm-vvpat-idle" id="evm-vvpat-idle">— — —</div>
-            <div class="evm-vvpat-slip" id="evm-vvpat-slip" style="display:none"></div>
-          </div>
-        </div>
-        <div class="evm-vvpat-label">${t('evm_vvpat_label')}</div>
-      </div>
+    <div class="evm-machine-bot-strip">
+      <div class="evm-bu-sq-btn"></div>
+    </div>
+  </div>
 
-      <!-- SUCCESS OVERLAY -->
-      <div class="evm-success-overlay" id="evm-success" style="display:none">
-        <div class="evm-success-box">
-          <div class="evm-success-icon">✅</div>
-          <div class="evm-success-title">${t('evm_voted_title')}</div>
-          <div class="evm-success-desc">${t('evm_voted_desc')}</div>
-          <button class="btn btn-primary" onclick="evmReset()">${t('evm_reset')}</button>
+  <!-- ═══════════ VVPAT UNIT ═══════════ -->
+  <div class="evm-machine evm-vvpat-box">
+    <div class="evm-machine-top-strip">
+      <span class="evm-led" id="evm-vvpat-led"></span>
+      <span class="evm-unit-lbl">VVPAT</span>
+    </div>
+    <div class="evm-vvpat-body">
+      <div class="evm-vvpat-window" id="evm-vvpat-win">
+        <div class="evm-vvpat-glass">
+          <div class="evm-vvpat-idle-txt" id="evm-vvpat-idle">— — —</div>
+          <div class="evm-vvpat-slip" id="evm-vvpat-slip"></div>
         </div>
       </div>
+      <div class="evm-vvpat-footer">${t('evm_vvpat_label')}</div>
+    </div>
+  </div>
 
-    </div>`;
+  <!-- STATUS TEXT -->
+  <div class="evm-status" id="evm-status">${t('evm_instruction')}</div>
 
+  <!-- SUCCESS OVERLAY (hidden until voted) -->
+  <div class="evm-overlay" id="evm-overlay" style="display:none">
+    <div class="evm-overlay-box">
+      <div style="font-size:52px">✅</div>
+      <div class="evm-overlay-title">${t('evm_voted_title')}</div>
+      <div class="evm-overlay-desc">${t('evm_voted_desc')}</div>
+      <button class="btn btn-primary" onclick="evmReset()">${t('evm_reset')}</button>
+    </div>
+  </div>
+
+</div>`;
+
+  // Start LCD idle blink
+  _evmStartBlink();
   setVoiceText(t('evm_instruction'));
 }
 
+// ── LCD blink (idle) ─────────────────────────────────────────
+let _blinkTimer = null;
+function _evmStartBlink() {
+  let visible = true;
+  _blinkTimer = setInterval(() => {
+    const v = document.getElementById('evm-lcd-val');
+    if (v && !_evmVoted && _evmSelected === null) {
+      v.style.opacity = visible ? '1' : '0.2';
+      visible = !visible;
+    }
+  }, 700);
+}
+function _evmStopBlink() {
+  clearInterval(_blinkTimer);
+  const v = document.getElementById('evm-lcd-val');
+  if (v) v.style.opacity = '1';
+}
+
+// ── Press vote button ────────────────────────────────────────
 function evmPress(idx) {
   if (_evmVoted) return;
 
-  const candidates = t('evm_candidates');
-  const cand = candidates[idx];
-
-  // Deselect previous
+  // Deselect old row
   if (_evmSelected !== null) {
-    document.getElementById('evm-light-' + _evmSelected).classList.remove('active');
-    document.getElementById('evm-row-' + _evmSelected).classList.remove('selected');
+    const oldRow = document.getElementById('evm-row-' + _evmSelected);
+    const oldDot = document.getElementById('evm-dot-' + _evmSelected);
+    if (oldRow) oldRow.classList.remove('evm-row-selected');
+    if (oldDot) oldDot.classList.remove('evm-dot-green');
   }
 
   _evmSelected = idx;
-  document.getElementById('evm-light-' + idx).classList.add('active');
-  document.getElementById('evm-row-' + idx).classList.add('selected');
+  const candidates = t('evm_candidates');
+  const cand = candidates[idx];
 
-  // Update LCD
-  document.getElementById('evm-lcd-l1').textContent = `उमेदवार क्र. ${cand.num}`;
-  document.getElementById('evm-lcd-l2').textContent = cand.name;
+  // Highlight row + turn dot green
+  const row = document.getElementById('evm-row-' + idx);
+  const dot = document.getElementById('evm-dot-' + idx);
+  if (row) row.classList.add('evm-row-selected');
+  if (dot) dot.classList.add('evm-dot-green');
 
-  // Play beep
+  // Button press animation
+  const btn = document.getElementById('evm-btn-' + idx);
+  if (btn) {
+    btn.classList.add('evm-btn-pressed');
+    setTimeout(() => btn && btn.classList.remove('evm-btn-pressed'), 150);
+  }
+
+  // Stop idle blink, update LCD
+  _evmStopBlink();
+  const lcdVal = document.getElementById('evm-lcd-val');
+  const lcdSub = document.getElementById('evm-lcd-sub');
+  if (lcdVal) lcdVal.textContent = String(idx + 1).padStart(2, '0');
+  if (lcdSub) lcdSub.textContent = cand.name.split(' ')[0];
+
+  // LED on VVPAT glows
+  const vvpatLed = document.getElementById('evm-vvpat-led');
+  if (vvpatLed) vvpatLed.classList.add('evm-led-ready');
+
+  // Status text
+  const status = document.getElementById('evm-status');
+  if (status) status.textContent = `${cand.symbol} ${cand.name} — ${t('evm_screen_selected')}`;
+
+  // Beep
   _evmBeep();
 
-  // Show VVPAT slip
+  // Mark voted
   _evmVoted = true;
-  _evmShowVVPAT(cand);
 
   // Disable all buttons
-  document.querySelectorAll('.evm-vote-button').forEach(b => b.disabled = true);
+  document.querySelectorAll('.evm-row-btn').forEach(b => b.disabled = true);
 
-  setVoiceText(`${cand.name} निवडले`);
+  // Show VVPAT slip
+  _evmShowSlip(cand);
 }
 
+// ── Web Audio beep ───────────────────────────────────────────
 function _evmBeep() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -129,61 +214,59 @@ function _evmBeep() {
     gain.connect(ctx.destination);
     osc.type = 'sine';
     osc.frequency.setValueAtTime(800, ctx.currentTime);
-    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain.gain.setValueAtTime(0.35, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
     osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.3);
-  } catch(e) {}
+    osc.stop(ctx.currentTime + 0.35);
+  } catch (e) {}
 
-  // Visual beep pulse
   const beep = document.getElementById('evm-beep');
   if (beep) {
     beep.style.display = 'block';
-    setTimeout(() => { if (beep) beep.style.display = 'none'; }, 800);
+    setTimeout(() => { if (beep) beep.style.display = 'none'; }, 900);
   }
 }
 
-function _evmShowVVPAT(cand) {
+// ── VVPAT slip ───────────────────────────────────────────────
+function _evmShowSlip(cand) {
   const idle = document.getElementById('evm-vvpat-idle');
   const slip = document.getElementById('evm-vvpat-slip');
   if (!idle || !slip) return;
 
   idle.style.display = 'none';
-  slip.style.display = 'flex';
   slip.innerHTML = `
-    <div class="vvpat-slip-content">
-      <div class="vvpat-serial">${cand.num}</div>
-      <div class="vvpat-symbol">${cand.symbol}</div>
-      <div class="vvpat-name">${cand.name}</div>
-      <div class="vvpat-party">${cand.party}</div>
-      <div class="vvpat-eciseal">🔏 ECI</div>
+    <div class="evm-slip-inner">
+      <div class="evm-slip-num">${cand.num}</div>
+      <div class="evm-slip-sym">${cand.symbol}</div>
+      <div class="evm-slip-name">${cand.name}</div>
+      <div class="evm-slip-party">${cand.party}</div>
+      <div class="evm-slip-seal">🔏 ECI</div>
     </div>`;
-  slip.classList.add('slip-in');
+  slip.style.display = 'flex';
+  slip.classList.add('slip-animate-in');
 
-  // After 7s slip drops and show voted state
+  // After 7 seconds drop slip and show result
   setTimeout(() => {
-    slip.classList.remove('slip-in');
-    slip.classList.add('slip-out');
+    slip.classList.remove('slip-animate-in');
+    slip.classList.add('slip-animate-out');
+
     setTimeout(() => {
-      // LCD shows VOTED
-      const l1 = document.getElementById('evm-lcd-l1');
-      const l2 = document.getElementById('evm-lcd-l2');
-      if (l1) l1.textContent = 'मत नोंदले गेले';
-      if (l2) { l2.textContent = 'VOTED ✓'; l2.style.color = '#00ff88'; }
-      // Show success overlay
+      // LCD → VOTED
+      const lcdVal = document.getElementById('evm-lcd-val');
+      const lcdSub = document.getElementById('evm-lcd-sub');
+      if (lcdVal) { lcdVal.textContent = '✓'; lcdVal.style.color = '#00e676'; }
+      if (lcdSub) { lcdSub.textContent = 'VOTED'; }
+
+      // Show overlay after brief pause
       setTimeout(() => {
-        const overlay = document.getElementById('evm-success');
-        if (overlay) {
-          overlay.style.display = 'flex';
-          launchConfetti && launchConfetti();
-        }
+        const overlay = document.getElementById('evm-overlay');
+        if (overlay) overlay.style.display = 'flex';
+        if (typeof launchConfetti === 'function') launchConfetti();
         AppState.markComplete('evm');
         setVoiceText(t('evm_voted_title'));
-      }, 600);
-    }, 600);
+      }, 500);
+    }, 500);
   }, 7000);
 }
 
-function evmReset() {
-  renderEvm();
-}
+function evmReset() { renderEvm(); }
