@@ -21,11 +21,13 @@ const AppState = {
 
 function t(key) {
   const lang = AppState.lang || 'mr';
-  return (CONTENT[lang] && CONTENT[lang][key]) || CONTENT['mr'][key] || key;
+  // Merge SETTINGS_CONTENT into lookup
+  const sc = (typeof SETTINGS_CONTENT !== 'undefined') ? SETTINGS_CONTENT[lang] || SETTINGS_CONTENT['mr'] : {};
+  return (CONTENT[lang] && CONTENT[lang][key]) || CONTENT['mr'][key] || sc[key] || key;
 }
 
 // ── Navigation ──────────────────────────────────────────────
-const NAV_SCREENS = ['home', 'explainer', 'quiz', 'rules', 'certificate'];
+const NAV_SCREENS = ['home', 'explainer', 'quiz', 'rules', 'certificate', 'settings'];
 
 function navigate(screen) {
   Voice.stop();
@@ -42,7 +44,18 @@ function navigate(screen) {
   });
 
   // Update top bar title
-  const titles = { home: t('app_name'), explainer: t('explainer_title'), quiz: t('quiz_title'), rules: t('rules_title'), certificate: t('cert_title'), evm: t('evm_title'), myths: t('myths_title') };
+  const lang = AppState.lang || 'mr';
+  const sc = (typeof SETTINGS_CONTENT !== 'undefined') ? SETTINGS_CONTENT[lang] || SETTINGS_CONTENT['mr'] : {};
+  const gvd = (typeof GAME_VOTING_DAY_DATA !== 'undefined') ? GAME_VOTING_DAY_DATA[lang] || GAME_VOTING_DAY_DATA['mr'] : {};
+  const gs = (typeof GAME_SPOT_DATA !== 'undefined') ? GAME_SPOT_DATA[lang] || GAME_SPOT_DATA['mr'] : {};
+  const gt = (typeof GAME_TIMELINE_DATA !== 'undefined') ? GAME_TIMELINE_DATA[lang] || GAME_TIMELINE_DATA['mr'] : {};
+  const titles = {
+    home: t('app_name'), explainer: t('explainer_title'), quiz: t('quiz_title'),
+    rules: t('rules_title'), certificate: t('cert_title'), evm: t('evm_title'),
+    myths: t('myths_title'), settings: sc.settings_title || 'Settings',
+    game_voting_day: gvd.title || 'Voting Day', game_spot: gs.title || 'Spot the Violation',
+    game_timeline: gt.title || 'Election Timeline'
+  };
   const titleEl = document.getElementById('top-bar-title');
   if (titleEl) titleEl.textContent = titles[screen] || t('app_name');
 
@@ -55,7 +68,12 @@ function navigate(screen) {
   if (container) container.scrollTop = 0;
 
   // Render screen
-  const renderers = { home: renderHome, explainer: renderExplainer, evm: renderEvm, quiz: renderQuiz, myths: renderMyths, rules: renderRules, certificate: renderCertificate };
+  const renderers = {
+    home: renderHome, explainer: renderExplainer, evm: renderEvm, quiz: renderQuiz,
+    myths: renderMyths, rules: renderRules, certificate: renderCertificate,
+    settings: renderSettings, game_voting_day: renderGameVotingDay,
+    game_spot: renderGameSpot, game_timeline: renderGameTimeline
+  };
   if (renderers[screen]) renderers[screen]();
 }
 
@@ -90,7 +108,7 @@ function buildShell() {
   const container = document.createElement('div');
   container.className = 'screen-container';
   container.id = 'screen-container';
-  ['home','explainer','evm','quiz','myths','rules','certificate'].forEach(s => {
+  ['home','explainer','evm','quiz','myths','rules','certificate','settings','game_voting_day','game_spot','game_timeline'].forEach(s => {
     const div = document.createElement('div');
     div.className = 'screen';
     div.id = 'screen-' + s;
@@ -98,12 +116,15 @@ function buildShell() {
   });
 
   // Bottom nav
+  const scLang = AppState.lang || 'mr';
+  const scLabels = (typeof SETTINGS_CONTENT !== 'undefined') ? SETTINGS_CONTENT[scLang] || SETTINGS_CONTENT['mr'] : {};
   const navItems = [
     { screen:'home', icon:'🏠', label: t('nav_home') },
     { screen:'explainer', icon:'🗳️', label: t('nav_learn') },
     { screen:'quiz', icon:'🧠', label: t('nav_quiz') },
     { screen:'rules', icon:'📋', label: t('nav_rules') },
-    { screen:'certificate', icon:'🏆', label: t('nav_cert') }
+    { screen:'certificate', icon:'🏆', label: t('nav_cert') },
+    { screen:'settings', icon:'⚙️', label: scLabels.nav_settings || 'Settings' }
   ];
   const bottomNav = document.createElement('nav');
   bottomNav.className = 'bottom-nav';
@@ -133,7 +154,14 @@ function setVoiceText(text) { currentVoiceText = text; }
 function onVoiceFab() { Voice.toggle(currentVoiceText, AppState.lang); }
 
 // ── Init ────────────────────────────────────────────────────
+function applyFontSize() {
+  const sz = localStorage.getItem('cs_fontsize') || 'font-md';
+  document.body.classList.remove('font-sm','font-md','font-lg');
+  document.body.classList.add(sz);
+}
+
 window.addEventListener('DOMContentLoaded', () => {
+  applyFontSize();
   // Remove splash after 2.2s
   setTimeout(() => {
     const splash = document.querySelector('.splash-screen');

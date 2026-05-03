@@ -160,3 +160,198 @@ const CONTENT = {
     cert_seal: '🔏', cert_footer: 'Election Commission of India | Voting is your right and responsibility'
   }
 };
+
+// ── NEW CONTENT (feature/ui-upgrade) ──────────────────────────
+
+// Settings labels
+const SETTINGS_CONTENT = {
+  mr: {
+    nav_settings: 'सेटिंग्ज',
+    settings_title: 'सेटिंग्ज', settings_lang: 'भाषा', settings_textsize: 'अक्षर आकार',
+    settings_small: 'लहान', settings_medium: 'मध्यम', settings_large: 'मोठे',
+    settings_voice_speed: 'आवाज गती', settings_slow: 'हळू', settings_normal: 'सामान्य', settings_fast: 'जलद',
+    settings_progress: 'प्रगती', settings_reset: 'सर्व प्रगती रीसेट करा',
+    settings_reset_confirm: 'तुम्हाला खात्री आहे का? सर्व डेटा हटेल.',
+    settings_screens_done: 'पूर्ण झालेले विभाग',
+  },
+  hi: {
+    nav_settings: 'सेटिंग्स',
+    settings_title: 'सेटिंग्स', settings_lang: 'भाषा', settings_textsize: 'अक्षर आकार',
+    settings_small: 'छोटा', settings_medium: 'मध्यम', settings_large: 'बड़ा',
+    settings_voice_speed: 'आवाज की गति', settings_slow: 'धीमी', settings_normal: 'सामान्य', settings_fast: 'तेज़',
+    settings_progress: 'प्रगति', settings_reset: 'सारी प्रगति रीसेट करें',
+    settings_reset_confirm: 'क्या आप सुनिश्चित हैं? सारा डेटा हट जाएगा।',
+    settings_screens_done: 'पूर्ण किए गए खंड',
+  },
+  en: {
+    nav_settings: 'Settings',
+    settings_title: 'Settings', settings_lang: 'Language', settings_textsize: 'Text Size',
+    settings_small: 'Small', settings_medium: 'Medium', settings_large: 'Large',
+    settings_voice_speed: 'Voice Speed', settings_slow: 'Slow', settings_normal: 'Normal', settings_fast: 'Fast',
+    settings_progress: 'Progress', settings_reset: 'Reset All Progress',
+    settings_reset_confirm: 'Are you sure? All data will be cleared.',
+    settings_screens_done: 'Completed Sections',
+  }
+};
+
+// Game A — Voting Day Simulation
+const GAME_VOTING_DAY_DATA = {
+  mr: {
+    title: 'मतदान दिन', subtitle: 'योग्य निर्णय घ्या!',
+    intro: 'आज मतदान आहे. प्रत्येक टप्प्यावर योग्य निर्णय घ्या.',
+    complete: '🎉 तुम्ही यशस्वीरित्या मत दिले!',
+    retry: 'पुन्हा प्रयत्न करा', next: 'पुढे →', finish: 'पूर्ण',
+    decisions: [
+      { q:'तुमच्याजवळ मतदार ओळखपत्र (EPIC) नाही — काय कराल?',
+        opts:['घरी परत जा — मतदान करता येणार नाही','Aadhaar कार्ड घेऊन जा — ते ECI मान्य आहे','दुसऱ्याचे ओळखपत्र वापर'],
+        ans:1, exp:'ECI ने मंजूर केलेली कोणतीही एक ओळखपत्र चालते — Aadhaar, पासपोर्ट, बँक पासबुक इ.' },
+      { q:'मतदान केंद्राबाहेर कोणी पैसे देत आहे — काय कराल?',
+        opts:['पैसे घ्या — कोण पाहणार?','नकार द्या आणि 1950 वर कळवा','पैसे घ्या पण त्यांना मत देऊ नका'],
+        ans:1, exp:'निवडणूक लाच घेणे हा कायद्याने गुन्हा आहे. 1950 हेल्पलाइनवर कळवा.' },
+      { q:'मतदान कक्षात तुमचा फोन आहे — काय कराल?',
+        opts:['EVM चा फोटो काढा','फोन खिशात ठेवा आणि मत द्या','व्हिडीओ काढून WhatsApp वर शेअर करा'],
+        ans:1, exp:'मतदान कक्षात फोटो/व्हिडीओ काढणे बेकायदेशीर आहे. फोन बंद किंवा खिशात ठेवा.' },
+      { q:'EVM वर बटण दाबल्यावर VVPAT मध्ये चुकीचा उमेदवार दिसला — काय कराल?',
+        opts:['शांतपणे बाहेर पडा — काही करता येणार नाही','ताबडतोब मतदान अधिकाऱ्याला कळवा','दुसऱ्या उमेदवाराला पुन्हा मत द्या'],
+        ans:1, exp:'VVPAT मध्ये चुकीची स्लिप आल्यास तात्काळ Presiding Officer ला कळवा. तुम्हाला Challenged Vote चा अधिकार आहे.' },
+      { q:'मतदान करून बाहेर पडताना पत्रकार विचारतो — कोणाला मत दिले?',
+        opts:['सांगा — गर्व आहे माझ्या निर्णयाचा','नकार द्या — गुप्त मतदान हा तुमचा अधिकार आहे','खोटे सांगा'],
+        ans:1, exp:'गुप्त मतदान हा भारतीय लोकशाहीचा मूलभूत आधार आहे. कोणालाही सांगणे बंधनकारक नाही.' }
+    ]
+  },
+  hi: {
+    title: 'मतदान दिन', subtitle: 'सही फैसला करें!',
+    intro: 'आज मतदान का दिन है। हर कदम पर सही फैसला करें।',
+    complete: '🎉 आपने सफलतापूर्वक वोट दिया!',
+    retry: 'फिर कोशिश करें', next: 'आगे →', finish: 'पूरा',
+    decisions: [
+      { q:'आपके पास मतदाता पहचान पत्र (EPIC) नहीं है — क्या करेंगे?',
+        opts:['घर वापस जाएं','Aadhaar कार्ड लेकर जाएं — वह ECI मान्य है','किसी और का पहचान पत्र इस्तेमाल करें'],
+        ans:1, exp:'ECI द्वारा मान्य कोई भी एक दस्तावेज़ चलता है — Aadhaar, पासपोर्ट, बैंक पासबुक आदि।' },
+      { q:'मतदान केंद्र के बाहर कोई पैसे दे रहा है — क्या करेंगे?',
+        opts:['पैसे ले लो','मना करें और 1950 पर रिपोर्ट करें','पैसे लो पर उन्हें वोट मत दो'],
+        ans:1, exp:'चुनावी रिश्वत लेना कानूनन अपराध है। 1950 हेल्पलाइन पर सूचित करें।' },
+      { q:'मतदान कक्ष में आपके पास फोन है — क्या करेंगे?',
+        opts:['EVM की फोटो खींचें','फोन जेब में रखें और वोट दें','वीडियो बनाकर WhatsApp पर डालें'],
+        ans:1, exp:'मतदान कक्ष में फोटो/वीडियो बनाना गैरकानूनी है। फोन बंद या जेब में रखें।' },
+      { q:'EVM का बटण दबाने पर VVPAT में गलत उम्मीदवार दिखा — क्या करेंगे?',
+        opts:['चुपचाप बाहर निकलें','तुरंत मतदान अधिकारी को बताएं','दूसरे उम्मीदवार को फिर वोट दें'],
+        ans:1, exp:'VVPAT में गलत पर्ची आने पर तुरंत Presiding Officer को बताएं। Challenged Vote का अधिकार है।' },
+      { q:'वोट देकर निकलते समय पत्रकार पूछे — किसे वोट दिया?',
+        opts:['बताएं — गर्व है अपने फैसले पर','मना करें — गुप्त मतदान आपका अधिकार है','झूठ बोलें'],
+        ans:1, exp:'गुप्त मतदान भारतीय लोकतंत्र की नींव है। किसी को बताना जरूरी नहीं।' }
+    ]
+  },
+  en: {
+    title: 'Voting Day', subtitle: 'Make the right choices!',
+    intro: 'Today is election day. Make the right decision at each step.',
+    complete: '🎉 You successfully cast your vote!',
+    retry: 'Try Again', next: 'Next →', finish: 'Finish',
+    decisions: [
+      { q:"You don't have your Voter ID (EPIC) — what do you do?",
+        opts:['Go back home — you can\'t vote','Bring your Aadhaar card — it\'s ECI approved','Use someone else\'s ID'],
+        ans:1, exp:'Any one of the 12 ECI-approved documents is accepted — Aadhaar, Passport, Bank Passbook, etc.' },
+      { q:'Someone is offering money outside the polling booth — what do you do?',
+        opts:['Take the money — who will know?','Refuse and report to 1950 helpline','Take money but vote for someone else'],
+        ans:1, exp:'Accepting electoral bribes is a criminal offence. Report it to the 1950 ECI helpline.' },
+      { q:'You have your phone in the voting compartment — what do you do?',
+        opts:['Take a photo of the EVM','Keep the phone in your pocket and vote','Record a video and share on WhatsApp'],
+        ans:1, exp:'Photography/video inside the voting compartment is illegal. Keep your phone off or in your pocket.' },
+      { q:'After pressing the EVM button the VVPAT shows the wrong candidate — what do you do?',
+        opts:['Leave quietly — nothing can be done','Immediately inform the Presiding Officer','Press another candidate\'s button'],
+        ans:1, exp:'If the VVPAT slip is incorrect, immediately notify the Presiding Officer. You have the right to a Challenged Vote.' },
+      { q:'After voting, a journalist asks who you voted for — what do you say?',
+        opts:['Tell them — you\'re proud of your choice','Decline — secret ballot is your right','Lie'],
+        ans:1, exp:'Secret ballot is a fundamental pillar of Indian democracy. You are not obligated to tell anyone.' }
+    ]
+  }
+};
+
+// Game B — Spot the Violation
+const GAME_SPOT_DATA = {
+  mr: {
+    title: 'ओळखा कोण?', subtitle: 'MCC उल्लंघन ओळखा',
+    intro: 'प्रत्येक परिस्थिती वाचा — VIOLATION आहे का?',
+    score_label: 'स्कोर', finish: 'निकाल पहा', restart: 'पुन्हा खेळा',
+    violation_btn: '❌ उल्लंघन', allowed_btn: '✅ परवानगी आहे',
+    scenarios: [
+      { scene:'मतदानाच्या दिवशी उमेदवार मतदान केंद्राजवळ जाहिरातफलक लावतो.', isViolation:true, exp:'मतदान केंद्राच्या १०० मीटरच्या आत प्रचार करणे MCC उल्लंघन आहे.' },
+      { scene:'मतदान संपल्यानंतर एक राजकीय नेता पार्टी कार्यालयात बैठक घेतो.', isViolation:false, exp:'मतदान संपल्यावर कार्यालयीन बैठका कायदेशीर आहेत.' },
+      { scene:'एक उमेदवार मतदानाच्या आदल्या दिवशी मतदारांना मोफत जेवण वाटतो.', isViolation:true, exp:'मतदारांना भेटवस्तू, जेवण किंवा दारू देणे निवडणूक लाच आहे आणि MCC उल्लंघन आहे.' },
+      { scene:'एक नागरिक सोशल मीडियावर उमेदवाराच्या धोरणांवर स्वतःचे मत मांडतो.', isViolation:false, exp:'नागरिकांना सोशल मीडियावर मते व्यक्त करण्याचा अधिकार आहे — हे उल्लंघन नाही.' },
+      { scene:'एक मंत्री सरकारी वाहन वापरून निवडणूक प्रचार करतो.', isViolation:true, exp:'सरकारी वाहन वा संसाधने निवडणूक प्रचारासाठी वापरणे MCC उल्लंघन आहे.' },
+      { scene:'मतदानाच्या ४८ तास आधी सर्व प्रचार बंद होतो — उमेदवार घरी बसतो.', isViolation:false, exp:'Silent Period मध्ये प्रचार न करणे नियमानुसार आहे.' }
+    ]
+  },
+  hi: {
+    title: 'पहचानो कौन?', subtitle: 'MCC उल्लंघन पहचानें',
+    intro: 'हर परिस्थिति पढ़ें — क्या यह उल्लंघन है?',
+    score_label: 'स्कोर', finish: 'परिणाम देखें', restart: 'फिर खेलें',
+    violation_btn: '❌ उल्लंघन', allowed_btn: '✅ अनुमति है',
+    scenarios: [
+      { scene:'मतदान के दिन उम्मीदवार मतदान केंद्र के पास होर्डिंग लगाता है।', isViolation:true, exp:'मतदान केंद्र के 100 मीटर के भीतर प्रचार करना MCC उल्लंघन है।' },
+      { scene:'मतदान के बाद एक नेता पार्टी कार्यालय में बैठक करता है।', isViolation:false, exp:'मतदान के बाद कार्यालयीन बैठकें कानूनी हैं।' },
+      { scene:'उम्मीदवार मतदान से एक दिन पहले मतदाताओं को मुफ्त खाना बांटता है।', isViolation:true, exp:'मतदाताओं को उपहार, खाना या शराब देना चुनावी रिश्वत और MCC उल्लंघन है।' },
+      { scene:'एक नागरिक सोशल मीडिया पर उम्मीदवार की नीतियों पर राय देता है।', isViolation:false, exp:'नागरिकों को सोशल मीडिया पर राय देने का अधिकार है।' },
+      { scene:'एक मंत्री सरकारी गाड़ी से चुनाव प्रचार करता है।', isViolation:true, exp:'सरकारी वाहन या संसाधन चुनाव प्रचार के लिए इस्तेमाल करना MCC उल्लंघन है।' },
+      { scene:'मतदान से 48 घंटे पहले सारा प्रचार बंद — उम्मीदवार घर बैठता है।', isViolation:false, exp:'Silent Period में प्रचार न करना नियमानुसार है।' }
+    ]
+  },
+  en: {
+    title: 'Spot the Violation', subtitle: 'Identify MCC violations',
+    intro: 'Read each scenario — is it a violation?',
+    score_label: 'Score', finish: 'See Results', restart: 'Play Again',
+    violation_btn: '❌ Violation', allowed_btn: '✅ Allowed',
+    scenarios: [
+      { scene:'A candidate puts up a banner near the polling station on election day.', isViolation:true, exp:'Campaigning within 100 metres of a polling station is an MCC violation.' },
+      { scene:'After polling ends, a politician holds a meeting at the party office.', isViolation:false, exp:'Office meetings after polling hours are legal.' },
+      { scene:'A candidate distributes free meals to voters the day before polling.', isViolation:true, exp:'Distributing gifts, food, or alcohol to voters is electoral bribery and an MCC violation.' },
+      { scene:'A citizen posts their opinion on a candidate\'s policies on social media.', isViolation:false, exp:'Citizens have the right to express opinions on social media — not a violation.' },
+      { scene:'A minister uses a government vehicle to campaign.', isViolation:true, exp:'Using government vehicles or resources for election campaigning is an MCC violation.' },
+      { scene:'All campaigning stops 48 hours before voting — the candidate stays home.', isViolation:false, exp:'Respecting the Silent Period is required by law.' }
+    ]
+  }
+};
+
+// Game C — Election Timeline Puzzle
+const GAME_TIMELINE_DATA = {
+  mr: {
+    title: 'चुनाव टाइमलाइन', subtitle: 'क्रम लावा!',
+    intro: 'निवडणूक प्रक्रियेचे टप्पे योग्य क्रमात लावा.',
+    submit: 'क्रम तपासा', restart: 'पुन्हा प्रयत्न करा', perfect: '🎉 परिपूर्ण! बरोबर क्रम!',
+    stages: [
+      { id:1, label:'निवडणूक आयोगाची घोषणा', icon:'📢', order:1, exp:'ECI निवडणूक तारखा जाहीर करते.' },
+      { id:2, label:'आदर्श आचारसंहिता लागू', icon:'📜', order:2, exp:'घोषणेपासून MCC लागू होते.' },
+      { id:3, label:'उमेदवारी अर्ज दाखल', icon:'📝', order:3, exp:'उमेदवार नामांकन भरतात.' },
+      { id:4, label:'प्रचार सुरू', icon:'📣', order:4, exp:'उमेदवार मतदारांपर्यंत पोहोचतात.' },
+      { id:5, label:'मतदान', icon:'🗳️', order:5, exp:'मतदारांचे मतदान.' },
+      { id:6, label:'मतमोजणी व निकाल', icon:'🏆', order:6, exp:'मते मोजून विजेता घोषित.' }
+    ]
+  },
+  hi: {
+    title: 'चुनाव टाइमलाइन', subtitle: 'क्रम लगाएं!',
+    intro: 'चुनाव प्रक्रिया के चरणों को सही क्रम में लगाएं।',
+    submit: 'क्रम जांचें', restart: 'फिर प्रयास करें', perfect: '🎉 बिल्कुल सही क्रम!',
+    stages: [
+      { id:1, label:'चुनाव आयोग की घोषणा', icon:'📢', order:1, exp:'ECI चुनाव की तारीखें घोषित करता है।' },
+      { id:2, label:'आदर्श आचार संहिता लागू', icon:'📜', order:2, exp:'घोषणा से MCC लागू होती है।' },
+      { id:3, label:'नामांकन पत्र दाखिल', icon:'📝', order:3, exp:'उम्मीदवार नामांकन भरते हैं।' },
+      { id:4, label:'प्रचार शुरू', icon:'📣', order:4, exp:'उम्मीदवार मतदाताओं तक पहुंचते हैं।' },
+      { id:5, label:'मतदान', icon:'🗳️', order:5, exp:'मतदाता वोट देते हैं।' },
+      { id:6, label:'मतगणना और परिणाम', icon:'🏆', order:6, exp:'वोट गिने जाते हैं, विजेता घोषित।' }
+    ]
+  },
+  en: {
+    title: 'Election Timeline', subtitle: 'Sort in order!',
+    intro: 'Arrange the election process stages in the correct order.',
+    submit: 'Check Order', restart: 'Try Again', perfect: '🎉 Perfect! Correct order!',
+    stages: [
+      { id:1, label:'Election Commission Announcement', icon:'📢', order:1, exp:'ECI announces election dates and schedule.' },
+      { id:2, label:'Model Code of Conduct Enforced', icon:'📜', order:2, exp:'MCC comes into effect from the date of announcement.' },
+      { id:3, label:'Filing of Nominations', icon:'📝', order:3, exp:'Candidates file their nomination papers.' },
+      { id:4, label:'Election Campaigning', icon:'📣', order:4, exp:'Candidates reach out to voters.' },
+      { id:5, label:'Polling Day', icon:'🗳️', order:5, exp:'Voters cast their votes.' },
+      { id:6, label:'Vote Counting & Results', icon:'🏆', order:6, exp:'Votes are counted and winner declared.' }
+    ]
+  }
+};

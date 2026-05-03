@@ -3,6 +3,16 @@ function renderHome() {
   const el = document.getElementById('screen-home');
   const cards = t('home_cards');
   const lang = AppState.lang || 'mr';
+  // Build game cards from game data
+  const gvd = (typeof GAME_VOTING_DAY_DATA !== 'undefined') ? GAME_VOTING_DAY_DATA[lang] || GAME_VOTING_DAY_DATA['mr'] : null;
+  const gs  = (typeof GAME_SPOT_DATA !== 'undefined') ? GAME_SPOT_DATA[lang] || GAME_SPOT_DATA['mr'] : null;
+  const gt  = (typeof GAME_TIMELINE_DATA !== 'undefined') ? GAME_TIMELINE_DATA[lang] || GAME_TIMELINE_DATA['mr'] : null;
+  const gameCards = [
+    gvd ? { icon:'🗓️', label: gvd.title, screen:'game_voting_day', desc: gvd.subtitle } : null,
+    gs  ? { icon:'🔎', label: gs.title,  screen:'game_spot',        desc: gs.subtitle  } : null,
+    gt  ? { icon:'📅', label: gt.title,  screen:'game_timeline',    desc: gt.subtitle  } : null,
+  ].filter(Boolean);
+  const allCards = [...cards, ...gameCards];
 
   el.innerHTML = `
     <div class="home-hero">
@@ -11,7 +21,7 @@ function renderHome() {
       <div class="home-subtitle">${t('home_subtitle')}</div>
     </div>
     <div class="home-grid">
-      ${cards.map((c, i) => `
+      ${allCards.map((c, i) => `
         <div class="home-card ${i === 0 ? 'featured' : ''}" onclick="navigate('${c.screen}')"
           style="animation:fadeInUp ${0.1 + i * 0.07}s ease both">
           <span class="home-card-icon">${c.icon}</span>

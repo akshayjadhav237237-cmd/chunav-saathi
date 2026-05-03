@@ -9,7 +9,9 @@ const Voice = {
     this.stop();
     const utt = new SpeechSynthesisUtterance(text);
     utt.lang = this.langMap[lang] || 'hi-IN';
-    utt.rate = 0.88;
+    const speedMap = { slow: 0.65, normal: 0.88, fast: 1.3 };
+    const savedSpeed = localStorage.getItem('cs_voice_speed') || 'normal';
+    utt.rate = speedMap[savedSpeed] || 0.88;
     utt.pitch = 1;
     utt.volume = 1;
     utt.onstart = () => { this.speaking = true; this._updateUI(true); };

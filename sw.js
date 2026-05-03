@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chunav-saathi-v2';
+const CACHE_NAME = 'chunav-saathi-v3';
 const CRITICAL_ASSETS = [
   './',
   './index.html',
@@ -17,6 +17,10 @@ const CRITICAL_ASSETS = [
   './js/screens/myths.js',
   './js/screens/rules.js',
   './js/screens/certificate.js',
+  './js/screens/settings.js',
+  './js/screens/game_voting_day.js',
+  './js/screens/game_spot.js',
+  './js/screens/game_timeline.js',
   './js/app.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
