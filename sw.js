@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chunav-saathi-v3';
+const CACHE_NAME = 'chunav-saathi-v4';
 const CRITICAL_ASSETS = [
   './',
   './index.html',
