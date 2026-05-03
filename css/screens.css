@@ -353,8 +353,6 @@ body.font-lg{font-size:22px}
   height:auto;
   display:block;
   filter:drop-shadow(0 4px 14px rgba(0,0,0,.2));
-  transform:perspective(600px) rotateX(3deg);
-  transform-origin:top center;
 }
 
 /* Candidate name overlay — positioned over SVG */
@@ -366,7 +364,7 @@ body.font-lg{font-size:22px}
 .evm-name-row{
   position:absolute;
   left:calc(26/240 * 100%);
-  right:calc(52/240 * 100%);
+  right:calc(62/240 * 100%);  /* stop before dot at cx=168 */
   display:flex;
   align-items:center;
   gap:4px;
@@ -401,8 +399,8 @@ body.font-lg{font-size:22px}
 }
 .evm-vote-btn{
   position:absolute;
-  left:   calc(186/240 * 100%);
-  width:  calc(46/240 * 100%);
+  left:   calc(176/240 * 100%);
+  width:  calc(42/240 * 100%);
   height: calc(22/210 * 100%);
   background:linear-gradient(180deg,#2855C8 0%,#1565C0 100%);
   border:none;
