@@ -998,3 +998,18 @@ body.font-lg{font-size:22px}
 
 /* Extra keyframe for VVPAT slide out */
 @keyframes vvpatSlideOut{0%{transform:translateY(0);opacity:1}100%{transform:translateY(110%);opacity:0}}
+
+/* SKIP LINK */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #1565C0;
+  color: white;
+  padding: 8px;
+  z-index: 9999;
+  font-size: 14px;
+}
+.skip-link:focus {
+  top: 0;
+}

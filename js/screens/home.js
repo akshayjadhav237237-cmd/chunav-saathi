@@ -23,7 +23,7 @@ function renderHome() {
     <div class="home-grid">
       ${allCards.map((c, i) => `
         <div class="home-card ${i === 0 ? 'featured' : ''}" onclick="navigate('${c.screen}')"
-          style="animation:fadeInUp ${0.1 + i * 0.07}s ease both">
+          role="button" tabindex="0" style="animation:fadeInUp ${0.1 + i * 0.07}s ease both">
           <span class="home-card-icon">${c.icon}</span>
           <span>
             <span class="home-card-label">${c.label}</span>

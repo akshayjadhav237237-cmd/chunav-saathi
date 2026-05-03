@@ -48,9 +48,9 @@ function renderQuestion() {
     </div>
     <div class="quiz-card">
       <div class="quiz-question">${q.q}</div>
-      <div class="quiz-options">
+      <div class="quiz-options" role="radiogroup">
         ${q.opts.map((o, i) => `
-          <button class="quiz-option-btn" id="qopt-${i}" onclick="answerQuiz(${i})">
+          <button class="quiz-option-btn" id="qopt-${i}" onclick="answerQuiz(${i})" role="radio" aria-checked="false">
             <span class="quiz-option-key">${['A','B','C','D'][i]}</span>
             <span>${o}</span>
           </button>`).join('')}
@@ -66,13 +66,21 @@ function answerQuiz(chosen) {
   const lang = AppState.lang || 'mr';
   const q = QUIZ_DATA[lang][_qState.idx];
   const isCorrect = chosen === q.ans;
-  if (isCorrect) _qState.score++;
+  if (isCorrect) {
+    _qState.score++;
+    if(typeof gtag !== 'undefined') {
+      gtag('event', 'quiz_answer', {
+        correct: true
+      });
+    }
+  }
 
   // Color buttons
   q.opts.forEach((_, i) => {
     const btn = document.getElementById('qopt-' + i);
     if (!btn) return;
     btn.disabled = true;
+    if (i === chosen) btn.setAttribute('aria-checked', 'true');
     if (i === q.ans) btn.classList.add('correct');
     else if (i === chosen) btn.classList.add('incorrect');
   });

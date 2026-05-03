@@ -40,9 +40,21 @@ function renderCertificate() {
   setVoiceText(t('cert_title'));
 }
 
+function sanitizeInput(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+    .trim()
+    .slice(0, 100);
+}
+
 function generateCertificate() {
   const nameInput = document.getElementById('cert-name-input');
-  const name = (nameInput && nameInput.value.trim()) || AppState.userName.trim();
+  let name = (nameInput && nameInput.value.trim()) || AppState.userName.trim();
+  name = sanitizeInput(name);
   if (!name) {
     showToast(AppState.lang === 'en' ? 'Please enter your name.' : AppState.lang === 'hi' ? 'कृपया अपना नाम लिखें।' : 'कृपया तुमचे नाव लिहा.');
     return;

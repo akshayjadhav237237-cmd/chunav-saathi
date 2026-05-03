@@ -23,7 +23,7 @@ function renderExplainerStep() {
         <span>${t('explainer_title')}</span>
         <span>${_explainerStep + 1} / ${total}</span>
       </div>
-      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+      <div class="progress-bar-wrap" role="progressbar" aria-valuenow="${_explainerStep + 1}" aria-valuemin="1" aria-valuemax="${total}" aria-label="Step ${_explainerStep + 1} of ${total}"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
     </div>
     <div class="step-dots">${dots}</div>
 

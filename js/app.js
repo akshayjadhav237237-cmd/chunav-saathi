@@ -15,6 +15,11 @@ const AppState = {
     if (!this.completedScreens.includes(s)) {
       this.completedScreens.push(s);
       localStorage.setItem('cs_completed', JSON.stringify(this.completedScreens));
+      if(typeof gtag !== 'undefined') {
+        gtag('event', 'screen_complete', {
+          screen_name: s
+        });
+      }
     }
   }
 };
@@ -44,7 +49,9 @@ function navigate(screen) {
 
   // Update bottom nav
   document.querySelectorAll('.bottom-nav-item').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.screen === screen);
+    const isSelected = btn.dataset.screen === screen;
+    btn.classList.toggle('active', isSelected);
+    btn.setAttribute('aria-selected', isSelected.toString());
   });
 
   // Update top bar title
@@ -79,6 +86,19 @@ function navigate(screen) {
     game_spot: renderGameSpot, game_timeline: renderGameTimeline
   };
   if (renderers[screen]) renderers[screen]();
+
+  if(typeof gtag !== 'undefined') {
+    gtag('event', 'screen_view', {
+      screen_name: screen,
+      app_name: 'ChunawSaathi'
+    });
+  }
+
+  const targetScreen = document.getElementById('screen-' + screen);
+  if (targetScreen) {
+    targetScreen.setAttribute('tabindex', '-1');
+    targetScreen.focus();
+  }
 }
 
 // ── Toast ───────────────────────────────────────────────────
@@ -99,9 +119,9 @@ function buildShell() {
   const topBar = document.createElement('div');
   topBar.className = 'top-bar';
   topBar.innerHTML = `
-    <button class="top-bar-back" id="top-bar-back" aria-label="Back" onclick="navigate('home')" style="display:none">‹</button>
+    <button class="top-bar-back" id="top-bar-back" aria-label="Go back" onclick="navigate('home')" style="display:none">‹</button>
     <span class="top-bar-title" id="top-bar-title">${t('app_name')}</span>
-    <button class="top-bar-voice" id="top-bar-voice" aria-label="Voice" onclick="onVoiceFab()">🔊</button>`;
+    <button class="top-bar-voice" id="top-bar-voice" aria-label="Read page aloud" aria-live="polite" onclick="onVoiceFab()">🔊</button>`;
 
   // Tricolor
   const tricolor = document.createElement('div');
@@ -112,6 +132,9 @@ function buildShell() {
   const container = document.createElement('div');
   container.className = 'screen-container';
   container.id = 'screen-container';
+  container.setAttribute('role', 'main');
+  container.setAttribute('aria-live', 'polite');
+  container.setAttribute('aria-atomic', 'false');
   ['home','explainer','evm','quiz','myths','rules','certificate','settings','game_voting_day','game_spot','game_timeline'].forEach(s => {
     const div = document.createElement('div');
     div.className = 'screen';
@@ -133,7 +156,7 @@ function buildShell() {
   const bottomNav = document.createElement('nav');
   bottomNav.className = 'bottom-nav';
   bottomNav.innerHTML = navItems.map(n => `
-    <button class="bottom-nav-item" data-screen="${n.screen}" onclick="navigate('${n.screen}')" aria-label="${n.label}">
+    <button class="bottom-nav-item" data-screen="${n.screen}" onclick="navigate('${n.screen}')" aria-label="${n.label}" role="tab" aria-selected="false">
       <span class="bottom-nav-icon">${n.icon}</span>
       <span class="bottom-nav-label">${n.label}</span>
     </button>`).join('');
@@ -142,7 +165,8 @@ function buildShell() {
   const fab = document.createElement('button');
   fab.className = 'voice-fab';
   fab.id = 'voice-fab';
-  fab.setAttribute('aria-label', 'Voice');
+  fab.setAttribute('aria-label', 'Read page aloud');
+  fab.setAttribute('aria-live', 'polite');
   fab.textContent = '🔊';
   fab.onclick = onVoiceFab;
 
