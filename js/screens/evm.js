@@ -157,7 +157,7 @@ function renderEvm() {
       <!-- Candidate name labels (HTML overlay for Devanagari) -->
       <div class="evm-names-overlay">
         ${candidates.map((c, i) => `
-          <div class="evm-name-row" style="top:${BU_TOP + i*ROW_H + 1}px; height:${ROW_H - 2}px">
+          <div class="evm-name-row" style="top:${((BU_TOP + i*ROW_H + 1)/210*100).toFixed(3)}%; height:${((ROW_H - 2)/210*100).toFixed(3)}%">
             <span class="evm-name-sym">${c.symbol}</span>
             <span class="evm-name-text">
               <span class="evm-name-main">${c.name}</span>
@@ -170,7 +170,7 @@ function renderEvm() {
       <div class="evm-btns-overlay">
         ${candidates.map((c, i) => `
           <button class="evm-vote-btn" id="evm-btn-${i}"
-            style="top:${BU_TOP + i*ROW_H + 7}px"
+            style="top:${((BU_TOP + i*ROW_H + 7)/210*100).toFixed(3)}%"
             onclick="evmPress(${i})"
             aria-label="Vote for ${c.name}">
           </button>`).join('')}

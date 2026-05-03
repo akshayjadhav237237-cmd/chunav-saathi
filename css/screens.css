@@ -254,8 +254,8 @@ body.font-lg{font-size:22px}
   display:flex; flex-direction:column;
   align-items:center;
   gap:10px;
-  padding:10px 2px 100px;
-  overflow:hidden;
+  padding:10px 4px 100px;
+  overflow:visible;
 }
 
 /* Practice badge */
@@ -347,6 +347,7 @@ body.font-lg{font-size:22px}
   position:relative;
   flex:1;
   min-width:0;
+  aspect-ratio: 240 / 210;
 }
 .evm-bu-svg{
   width:100%;
