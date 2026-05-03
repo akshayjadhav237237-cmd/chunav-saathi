@@ -364,7 +364,7 @@ body.font-lg{font-size:22px}
 .evm-name-row{
   position:absolute;
   left:calc(26/240 * 100%);
-  right:calc(62/240 * 100%);  /* stop before dot at cx=168 */
+  right:calc(85/240 * 100%);
   display:flex;
   align-items:center;
   gap:4px;
@@ -399,7 +399,7 @@ body.font-lg{font-size:22px}
 }
 .evm-vote-btn{
   position:absolute;
-  left:   calc(176/240 * 100%);
+  left:   calc(171/240 * 100%);
   width:  calc(42/240 * 100%);
   height: calc(22/210 * 100%);
   background:linear-gradient(180deg,#2855C8 0%,#1565C0 100%);
