@@ -254,7 +254,8 @@ body.font-lg{font-size:22px}
   display:flex; flex-direction:column;
   align-items:center;
   gap:10px;
-  padding:10px 8px 100px;
+  padding:10px 4px 100px;
+  overflow-x:hidden;
 }
 
 /* Practice badge */
@@ -272,9 +273,10 @@ body.font-lg{font-size:22px}
   display:flex;
   align-items:flex-end;
   gap:0;
-  width:100%;
-  max-width:440px;
+  width:calc(100% + 8px);
+  max-width:448px;
   overflow:visible;
+  margin-right:-8px;
 }
 
 /* Control Unit container */
@@ -364,8 +366,8 @@ body.font-lg{font-size:22px}
 }
 .evm-name-row{
   position:absolute;
-  left:calc(26/220 * 100%);   /* after serial num col */
-  right:calc(52/220 * 100%);  /* before dot + button */
+  left:calc(26/240 * 100%);
+  right:calc(52/240 * 100%);
   display:flex;
   align-items:center;
   gap:4px;
@@ -400,9 +402,8 @@ body.font-lg{font-size:22px}
 }
 .evm-vote-btn{
   position:absolute;
-  /* Matches SVG x=185, width=40 in viewBox 220 */
-  left:   calc(185/220 * 100%);
-  width:  calc(40/220 * 100%);
+  left:   calc(186/240 * 100%);
+  width:  calc(46/240 * 100%);
   height: calc(22/210 * 100%);
   background:linear-gradient(180deg,#2855C8 0%,#1565C0 100%);
   border:none;

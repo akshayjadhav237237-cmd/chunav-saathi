@@ -101,14 +101,13 @@ function renderEvm() {
 
     <!-- ── BALLOT UNIT ── -->
     <div class="evm-bu-wrap" id="evm-bu-wrap">
-      <svg class="evm-bu-svg" viewBox="0 0 220 210" xmlns="http://www.w3.org/2000/svg">
-        <!-- Body (cream, angled feel via transform) -->
-        <rect x="2" y="4" width="216" height="170" rx="8" ry="8"
+      <svg class="evm-bu-svg" viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="4" width="236" height="170" rx="8" ry="8"
           fill="#F0EDE8" stroke="#C8C4BC" stroke-width="1.5"/>
         <!-- ECI header strip (blue) -->
-        <rect x="2" y="4" width="216" height="28" rx="8" ry="8" fill="#1A3A8F"/>
-        <rect x="2" y="22" width="216" height="10" fill="#1A3A8F"/>
-        <text x="110" y="20" text-anchor="middle" font-size="7.5"
+        <rect x="2" y="4" width="236" height="28" rx="8" ry="8" fill="#1A3A8F"/>
+        <rect x="2" y="22" width="236" height="10" fill="#1A3A8F"/>
+        <text x="120" y="20" text-anchor="middle" font-size="7.5"
           fill="#fff" font-family="sans-serif" font-weight="bold"
           letter-spacing=".5">भारत निवडणूक आयोग  |  ELECTION COMMISSION OF INDIA</text>
         <!-- Candidate row dividers (4 candidates) -->
@@ -132,18 +131,18 @@ function renderEvm() {
             font-family="sans-serif" font-weight="900">VOTE</text>
         `).join('')}
         <!-- Last row border -->
-        <line x1="2" y1="${BU_TOP + candidates.length*ROW_H}" x2="218"
+        <line x1="2" y1="${BU_TOP + candidates.length*ROW_H}" x2="238"
           y2="${BU_TOP + candidates.length*ROW_H}" stroke="#BFBBBB" stroke-width="1"/>
         <!-- Blue bottom strip -->
-        <rect x="2" y="170" width="216" height="10" fill="#1A3A8F"/>
-        <rect x="2" y="178" width="216" height="6" fill="rgba(0,0,0,0.15)"/>
+        <rect x="2" y="170" width="236" height="10" fill="#1A3A8F"/>
+        <rect x="2" y="178" width="236" height="6" fill="rgba(0,0,0,0.15)"/>
         <!-- Small square button bottom right -->
-        <rect x="196" y="148" width="18" height="18" rx="3" fill="#2855C8"/>
+        <rect x="214" y="148" width="18" height="18" rx="3" fill="#2855C8"/>
         <!-- Fold-out legs -->
         <polygon points="25,180 16,210 34,210" fill="#D8D4CC"/>
-        <polygon points="195,180 186,210 204,210" fill="#D8D4CC"/>
+        <polygon points="215,180 206,210 224,210" fill="#D8D4CC"/>
         <!-- BALLOT UNIT label -->
-        <text x="110" y="197" text-anchor="middle" font-size="6"
+        <text x="120" y="197" text-anchor="middle" font-size="6"
           fill="#9AA" font-family="sans-serif" letter-spacing="1">BALLOT UNIT</text>
         <!-- Green LED -->
         <circle cx="10" cy="15" r="4" fill="#00c853" id="svg-bu-led"/>
