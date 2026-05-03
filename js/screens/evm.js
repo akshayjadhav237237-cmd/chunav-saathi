@@ -1,266 +1,342 @@
-// CHUNAV SAATHI — evm.js (REALISTIC ECI EVM v3)
+// CHUNAV SAATHI — evm.js (SVG-based realistic ECI EVM — reference image accurate)
 let _evmSelected = null;
 let _evmVoted    = false;
+let _blinkTimer  = null;
 
 function renderEvm() {
   _evmSelected = null;
   _evmVoted    = false;
-  const lang = AppState.lang || 'mr';
+  clearInterval(_blinkTimer);
+
+  const lang       = AppState.lang || 'mr';
   const candidates = t('evm_candidates');
-  const el = document.getElementById('screen-evm');
+  const el         = document.getElementById('screen-evm');
+
+  // Row height & button layout constants (match SVG coordinates)
+  const ROW_H      = 38;
+  const BU_TOP     = 58;   // first row top offset inside BU
+  const BTN_W      = 40;
+  const BTN_H      = 22;
 
   el.innerHTML = `
-<div class="evm-wrap">
+<div class="evm-page">
 
-  <!-- PRACTICE BADGE -->
+  <!-- ═══ PRACTICE BADGE ═══ -->
   <div class="evm-practice-badge">🔴 सराव मोड / PRACTICE MODE</div>
 
-  <!-- ═══════════ CONTROL UNIT ═══════════ -->
-  <div class="evm-machine evm-cu" id="evm-cu">
-    <div class="evm-machine-top-strip">
-      <span class="evm-led" id="evm-cu-led"></span>
-      <span class="evm-unit-lbl">CONTROL UNIT</span>
+  <!-- ═══════════════════════════════════════════
+       SIDE-BY-SIDE ROW: Control Unit + Ballot Unit
+  ════════════════════════════════════════════ -->
+  <div class="evm-row-wrap">
+
+    <!-- ── CONTROL UNIT ── -->
+    <div class="evm-cu-wrap" id="evm-cu-wrap">
+      <svg class="evm-cu-svg" viewBox="0 0 140 210" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body -->
+        <rect x="4" y="4" width="132" height="170" rx="10" ry="10"
+          fill="#F0EDE8" stroke="#C8C4BC" stroke-width="1.5"/>
+        <!-- Blue front panel -->
+        <rect x="14" y="18" width="112" height="128" rx="6"
+          fill="#1A3A8F"/>
+        <!-- Red LED display -->
+        <rect x="22" y="26" width="96" height="40" rx="4"
+          fill="#8B0000"/>
+        <rect x="26" y="30" width="88" height="32" rx="3"
+          fill="#0a0000"/>
+        <!-- Green LEDs (top of blue panel) -->
+        <circle cx="22" cy="15" r="4" fill="#00c853" id="svg-cu-led"/>
+        <circle cx="34" cy="15" r="4" fill="#555"/>
+        <!-- Key lock hole -->
+        <circle cx="70" cy="110" r="6" fill="#111"/>
+        <rect x="67" y="110" width="6" height="8" rx="2" fill="#111"/>
+        <!-- Horizontal slots -->
+        <rect x="30" y="78" width="80" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="30" y="86" width="80" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <rect x="30" y="94" width="80" height="4" rx="2" fill="rgba(255,255,255,0.12)"/>
+        <!-- BALLOT officer button -->
+        <rect x="38" y="125" width="64" height="16" rx="4" fill="#D8D4CC"/>
+        <text x="70" y="136" text-anchor="middle" font-size="7"
+          font-family="monospace" fill="#444" font-weight="bold">BALLOT</text>
+        <!-- Bottom buttons row -->
+        <rect x="18" y="148" width="44" height="14" rx="3" fill="#D8D4CC" opacity="0.6"/>
+        <text x="40" y="158" text-anchor="middle" font-size="6"
+          fill="#777" font-family="sans-serif" font-weight="bold">RESULT</text>
+        <rect x="68" y="148" width="44" height="14" rx="3" fill="#D8D4CC" opacity="0.6"/>
+        <text x="90" y="158" text-anchor="middle" font-size="6"
+          fill="#777" font-family="sans-serif" font-weight="bold">CLOSE</text>
+        <!-- Small blue square button -->
+        <rect x="118" y="148" width="14" height="14" rx="3"
+          fill="#2855C8" stroke="#1A3A8F" stroke-width="1"/>
+        <!-- Bottom blue accent strip -->
+        <rect x="4" y="170" width="132" height="10" rx="0"
+          fill="#1A3A8F"/>
+        <rect x="4" y="178" width="132" height="6" rx="0"
+          fill="rgba(0,0,0,0.15)"/>
+        <!-- Fold-out legs -->
+        <polygon points="20,180 12,210 28,210" fill="#D8D4CC"/>
+        <polygon points="120,180 112,210 128,210" fill="#D8D4CC"/>
+        <!-- "CONTROL UNIT" label -->
+        <text x="70" y="197" text-anchor="middle" font-size="6"
+          fill="#9AA" font-family="sans-serif" letter-spacing="1">CONTROL UNIT</text>
+        <!-- Cable exit on right side -->
+        <circle cx="136" cy="90" r="5" fill="#888"/>
+        <rect x="133" y="88" width="7" height="4" fill="#666"/>
+      </svg>
+
+      <!-- LCD overlay (HTML for blinking) -->
+      <div class="evm-lcd-overlay" id="evm-lcd-wrap">
+        <div class="evm-lcd-digits" id="evm-lcd-val">00</div>
+        <div class="evm-lcd-sub" id="evm-lcd-sub">READY</div>
+      </div>
+
+      <!-- Beep indicator -->
+      <div class="evm-beep-dot" id="evm-beep" style="display:none"></div>
     </div>
 
-    <div class="evm-cu-body">
-      <!-- LCD panel -->
-      <div class="evm-lcd-panel">
-        <div class="evm-lcd-screen" id="evm-lcd">
-          <div class="evm-lcd-val" id="evm-lcd-val">00</div>
-          <div class="evm-lcd-sub" id="evm-lcd-sub">READY</div>
-        </div>
+    <!-- ── CABLE SVG ── -->
+    <svg class="evm-cable-svg" viewBox="0 0 30 210" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 2 90 C 10 90, 20 100, 28 100" 
+        stroke="#666" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+
+    <!-- ── BALLOT UNIT ── -->
+    <div class="evm-bu-wrap" id="evm-bu-wrap">
+      <svg class="evm-bu-svg" viewBox="0 0 220 210" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body (cream, angled feel via transform) -->
+        <rect x="2" y="4" width="216" height="170" rx="8" ry="8"
+          fill="#F0EDE8" stroke="#C8C4BC" stroke-width="1.5"/>
+        <!-- ECI header strip (blue) -->
+        <rect x="2" y="4" width="216" height="28" rx="8" ry="8" fill="#1A3A8F"/>
+        <rect x="2" y="22" width="216" height="10" fill="#1A3A8F"/>
+        <text x="110" y="20" text-anchor="middle" font-size="7.5"
+          fill="#fff" font-family="sans-serif" font-weight="bold"
+          letter-spacing=".5">भारत निवडणूक आयोग  |  ELECTION COMMISSION OF INDIA</text>
+        <!-- Candidate row dividers (4 candidates) -->
+        ${candidates.map((c, i) => `
+          <line x1="2" y1="${BU_TOP + i*ROW_H}" x2="218" y2="${BU_TOP + i*ROW_H}"
+            stroke="#BFBBBB" stroke-width="1"/>
+          <!-- Serial num box -->
+          <rect x="4" y="${BU_TOP + i*ROW_H + 1}" width="22" height="${ROW_H - 1}"
+            fill="${i % 2 === 0 ? '#F0EDE8' : '#EAE7E0'}"/>
+          <text x="15" y="${BU_TOP + i*ROW_H + ROW_H/2 + 4}" text-anchor="middle"
+            font-size="9" font-family="sans-serif" font-weight="bold" fill="#222">${c.num}</text>
+          <!-- Indicator (red dot, becomes green) -->
+          <circle cx="178" cy="${BU_TOP + i*ROW_H + ROW_H/2}" r="5"
+            fill="#CC0000" id="svg-dot-${i}" class="svg-dot"/>
+          <!-- Blue button rect outline (actual button is HTML) -->
+          <rect x="185" y="${BU_TOP + i*ROW_H + 7}" width="${BTN_W}" height="${BTN_H}" rx="3"
+            fill="#1565C0" stroke="#0D47A1" stroke-width="1"
+            class="svg-vote-btn-bg" id="svg-btn-bg-${i}"/>
+          <text x="${185 + BTN_W/2}" y="${BU_TOP + i*ROW_H + 7 + BTN_H/2 + 3}"
+            text-anchor="middle" font-size="7" fill="#fff"
+            font-family="sans-serif" font-weight="900">VOTE</text>
+        `).join('')}
+        <!-- Last row border -->
+        <line x1="2" y1="${BU_TOP + candidates.length*ROW_H}" x2="218"
+          y2="${BU_TOP + candidates.length*ROW_H}" stroke="#BFBBBB" stroke-width="1"/>
+        <!-- Blue bottom strip -->
+        <rect x="2" y="170" width="216" height="10" fill="#1A3A8F"/>
+        <rect x="2" y="178" width="216" height="6" fill="rgba(0,0,0,0.15)"/>
+        <!-- Small square button bottom right -->
+        <rect x="196" y="148" width="18" height="18" rx="3" fill="#2855C8"/>
+        <!-- Fold-out legs -->
+        <polygon points="25,180 16,210 34,210" fill="#D8D4CC"/>
+        <polygon points="195,180 186,210 204,210" fill="#D8D4CC"/>
+        <!-- BALLOT UNIT label -->
+        <text x="110" y="197" text-anchor="middle" font-size="6"
+          fill="#9AA" font-family="sans-serif" letter-spacing="1">BALLOT UNIT</text>
+        <!-- Green LED -->
+        <circle cx="10" cy="15" r="4" fill="#00c853" id="svg-bu-led"/>
+        <!-- Cable entry on left -->
+        <circle cx="2" cy="100" r="5" fill="#888"/>
+      </svg>
+
+      <!-- Candidate name labels (HTML overlay for Devanagari) -->
+      <div class="evm-names-overlay">
+        ${candidates.map((c, i) => `
+          <div class="evm-name-row" style="top:${BU_TOP + i*ROW_H + 1}px; height:${ROW_H - 2}px">
+            <span class="evm-name-sym">${c.symbol}</span>
+            <span class="evm-name-text">
+              <span class="evm-name-main">${c.name}</span>
+              <span class="evm-name-party">${c.party}</span>
+            </span>
+          </div>`).join('')}
       </div>
 
-      <!-- Blue mid panel -->
-      <div class="evm-cu-blue-panel">
-        <div class="evm-cu-slots">
-          <div class="evm-slot"></div>
-          <div class="evm-slot"></div>
-          <div class="evm-slot"></div>
-        </div>
-        <div class="evm-ballot-officer-btn">BALLOT</div>
-        <div class="evm-keyhole">🔑</div>
-      </div>
-
-      <!-- Bottom buttons -->
-      <div class="evm-cu-btns">
-        <div class="evm-cu-btn-disabled">RESULT</div>
-        <div class="evm-cu-btn-disabled">CLOSE</div>
-        <div class="evm-cu-sq-btn"></div>
+      <!-- Interactive VOTE buttons (HTML, positioned over SVG) -->
+      <div class="evm-btns-overlay">
+        ${candidates.map((c, i) => `
+          <button class="evm-vote-btn" id="evm-btn-${i}"
+            style="top:${BU_TOP + i*ROW_H + 7}px"
+            onclick="evmPress(${i})"
+            aria-label="Vote for ${c.name}">
+          </button>`).join('')}
       </div>
     </div>
-
-    <div class="evm-machine-bot-strip"></div>
-    <!-- Beep pulse -->
-    <div class="evm-beep-dot" id="evm-beep" style="display:none"></div>
   </div>
 
-  <!-- ═══════════ BALLOT UNIT ═══════════ -->
-  <div class="evm-machine evm-bu" id="evm-bu">
-    <div class="evm-machine-top-strip">
-      <span class="evm-led evm-led-ready" id="evm-bu-led"></span>
-      <span class="evm-unit-lbl">BALLOT UNIT</span>
-    </div>
-
-    <div class="evm-bu-header">
-      <div class="evm-bu-title-mr">भारत निवडणूक आयोग</div>
-      <div class="evm-bu-title-en">ELECTION COMMISSION OF INDIA</div>
-    </div>
-
-    <!-- Candidate rows -->
-    <div class="evm-rows" id="evm-rows">
-      ${candidates.map((c, i) => `
-      <div class="evm-row" id="evm-row-${i}">
-        <div class="evm-row-num">${c.num}</div>
-        <div class="evm-row-info">
-          <div class="evm-row-symbol">${c.symbol}</div>
-          <div class="evm-row-text">
-            <div class="evm-row-name">${c.name}</div>
-            <div class="evm-row-party">${c.party}</div>
-          </div>
-        </div>
-        <div class="evm-row-dot" id="evm-dot-${i}"></div>
-        <button class="evm-row-btn" id="evm-btn-${i}"
-          onclick="evmPress(${i})"
-          aria-label="Vote for ${c.name}">
-        </button>
-      </div>`).join('')}
-    </div>
-
-    <div class="evm-machine-bot-strip">
-      <div class="evm-bu-sq-btn"></div>
+  <!-- ═══ VVPAT UNIT ═══ -->
+  <div class="evm-vvpat-wrap">
+    <svg class="evm-vvpat-svg" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="196" height="70" rx="8" fill="#F0EDE8"
+        stroke="#C8C4BC" stroke-width="1.5"/>
+      <rect x="2" y="2" width="196" height="14" rx="8" fill="#1A3A8F"/>
+      <rect x="2" y="10" width="196" height="6" fill="#1A3A8F"/>
+      <text x="100" y="12" text-anchor="middle" font-size="6.5" fill="#fff"
+        font-family="sans-serif" font-weight="bold" letter-spacing="1">VVPAT</text>
+      <circle cx="10" cy="8" r="3" fill="#444" id="svg-vvpat-led"/>
+      <!-- Glass window -->
+      <rect x="60" y="22" width="80" height="40" rx="4" fill="#0a0a0a" stroke="#444" stroke-width="1.5"/>
+      <rect x="62" y="24" width="76" height="36" rx="3" fill="#050505"/>
+      <!-- Footer label -->
+      <text x="100" y="72" text-anchor="middle" font-size="5.5" fill="#888"
+        font-family="sans-serif" letter-spacing=".5">${t('evm_vvpat_label')}</text>
+    </svg>
+    <!-- Slip window (HTML overlay) -->
+    <div class="evm-slip-window" id="evm-slip-win">
+      <div class="evm-slip-idle" id="evm-slip-idle">— — —</div>
+      <div class="evm-slip-paper" id="evm-slip-paper"></div>
     </div>
   </div>
 
-  <!-- ═══════════ VVPAT UNIT ═══════════ -->
-  <div class="evm-machine evm-vvpat-box">
-    <div class="evm-machine-top-strip">
-      <span class="evm-led" id="evm-vvpat-led"></span>
-      <span class="evm-unit-lbl">VVPAT</span>
-    </div>
-    <div class="evm-vvpat-body">
-      <div class="evm-vvpat-window" id="evm-vvpat-win">
-        <div class="evm-vvpat-glass">
-          <div class="evm-vvpat-idle-txt" id="evm-vvpat-idle">— — —</div>
-          <div class="evm-vvpat-slip" id="evm-vvpat-slip"></div>
-        </div>
-      </div>
-      <div class="evm-vvpat-footer">${t('evm_vvpat_label')}</div>
-    </div>
-  </div>
+  <!-- ═══ STATUS ═══ -->
+  <div class="evm-status-text" id="evm-status">${t('evm_instruction')}</div>
 
-  <!-- STATUS TEXT -->
-  <div class="evm-status" id="evm-status">${t('evm_instruction')}</div>
-
-  <!-- SUCCESS OVERLAY (hidden until voted) -->
-  <div class="evm-overlay" id="evm-overlay" style="display:none">
-    <div class="evm-overlay-box">
-      <div style="font-size:52px">✅</div>
-      <div class="evm-overlay-title">${t('evm_voted_title')}</div>
-      <div class="evm-overlay-desc">${t('evm_voted_desc')}</div>
+  <!-- ═══ SUCCESS OVERLAY ═══ -->
+  <div class="evm-success-overlay" id="evm-success" style="display:none">
+    <div class="evm-success-box">
+      <div class="evm-success-ico">✅</div>
+      <div class="evm-success-title">${t('evm_voted_title')}</div>
+      <div class="evm-success-desc">${t('evm_voted_desc')}</div>
       <button class="btn btn-primary" onclick="evmReset()">${t('evm_reset')}</button>
     </div>
   </div>
 
 </div>`;
 
-  // Start LCD idle blink
+  // Apply LED ready state on CU + BU
+  const cuLed = document.getElementById('svg-cu-led');
+  const buLed = document.getElementById('svg-bu-led');
+  if (cuLed) { cuLed.setAttribute('fill','#00c853'); }
+  if (buLed) { buLed.setAttribute('fill','#00c853'); }
+
   _evmStartBlink();
   setVoiceText(t('evm_instruction'));
 }
 
-// ── LCD blink (idle) ─────────────────────────────────────────
-let _blinkTimer = null;
+/* ── LCD blink ──────────────────────────────────────────── */
 function _evmStartBlink() {
-  let visible = true;
+  let show = true;
   _blinkTimer = setInterval(() => {
+    if (_evmSelected !== null || _evmVoted) { clearInterval(_blinkTimer); return; }
     const v = document.getElementById('evm-lcd-val');
-    if (v && !_evmVoted && _evmSelected === null) {
-      v.style.opacity = visible ? '1' : '0.2';
-      visible = !visible;
-    }
-  }, 700);
-}
-function _evmStopBlink() {
-  clearInterval(_blinkTimer);
-  const v = document.getElementById('evm-lcd-val');
-  if (v) v.style.opacity = '1';
+    if (v) v.style.opacity = show ? '1' : '0.15';
+    show = !show;
+  }, 650);
 }
 
-// ── Press vote button ────────────────────────────────────────
+/* ── Vote button press ──────────────────────────────────── */
 function evmPress(idx) {
   if (_evmVoted) return;
+  clearInterval(_blinkTimer);
 
-  // Deselect old row
+  // Reset previous selection
   if (_evmSelected !== null) {
-    const oldRow = document.getElementById('evm-row-' + _evmSelected);
-    const oldDot = document.getElementById('evm-dot-' + _evmSelected);
-    if (oldRow) oldRow.classList.remove('evm-row-selected');
-    if (oldDot) oldDot.classList.remove('evm-dot-green');
+    const pd = document.getElementById('svg-dot-' + _evmSelected);
+    const pr = document.querySelector(`#evm-bu-wrap .evm-name-row:nth-child(${_evmSelected+1})`);
+    if (pd) pd.setAttribute('fill','#CC0000');
+    if (pr) pr.classList.remove('evm-row-active');
   }
-
   _evmSelected = idx;
+
   const candidates = t('evm_candidates');
-  const cand = candidates[idx];
+  const cand       = candidates[idx];
 
-  // Highlight row + turn dot green
-  const row = document.getElementById('evm-row-' + idx);
-  const dot = document.getElementById('evm-dot-' + idx);
-  if (row) row.classList.add('evm-row-selected');
-  if (dot) dot.classList.add('evm-dot-green');
+  // Green dot
+  const dot = document.getElementById('svg-dot-' + idx);
+  if (dot) { dot.setAttribute('fill','#00c853'); dot.setAttribute('filter','url(#glow)'); }
 
-  // Button press animation
+  // Row highlight
+  const rows = document.querySelectorAll('#evm-bu-wrap .evm-name-row');
+  rows.forEach((r, i) => r.classList.toggle('evm-row-active', i === idx));
+
+  // Button press visual
   const btn = document.getElementById('evm-btn-' + idx);
-  if (btn) {
-    btn.classList.add('evm-btn-pressed');
-    setTimeout(() => btn && btn.classList.remove('evm-btn-pressed'), 150);
-  }
+  if (btn) { btn.classList.add('evm-btn-down'); setTimeout(() => btn && btn.classList.remove('evm-btn-down'), 150); }
 
-  // Stop idle blink, update LCD
-  _evmStopBlink();
+  // LCD update
   const lcdVal = document.getElementById('evm-lcd-val');
   const lcdSub = document.getElementById('evm-lcd-sub');
-  if (lcdVal) lcdVal.textContent = String(idx + 1).padStart(2, '0');
+  if (lcdVal) { lcdVal.style.opacity='1'; lcdVal.textContent = String(idx+1).padStart(2,'0'); }
   if (lcdSub) lcdSub.textContent = cand.name.split(' ')[0];
 
-  // LED on VVPAT glows
-  const vvpatLed = document.getElementById('evm-vvpat-led');
-  if (vvpatLed) vvpatLed.classList.add('evm-led-ready');
-
-  // Status text
+  // Status
   const status = document.getElementById('evm-status');
   if (status) status.textContent = `${cand.symbol} ${cand.name} — ${t('evm_screen_selected')}`;
+
+  // Disable all buttons
+  _evmVoted = true;
+  document.querySelectorAll('.evm-vote-btn').forEach(b => b.disabled = true);
+
+  // VVPAT LED on
+  const vLed = document.getElementById('svg-vvpat-led');
+  if (vLed) { vLed.setAttribute('fill','#00c853'); }
 
   // Beep
   _evmBeep();
 
-  // Mark voted
-  _evmVoted = true;
-
-  // Disable all buttons
-  document.querySelectorAll('.evm-row-btn').forEach(b => b.disabled = true);
-
-  // Show VVPAT slip
+  // VVPAT slip
   _evmShowSlip(cand);
 }
 
-// ── Web Audio beep ───────────────────────────────────────────
+/* ── Web Audio beep ─────────────────────────────────────── */
 function _evmBeep() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const osc  = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
+    osc.connect(gain); gain.connect(ctx.destination);
     osc.type = 'sine';
     osc.frequency.setValueAtTime(800, ctx.currentTime);
     gain.gain.setValueAtTime(0.35, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.35);
-  } catch (e) {}
-
-  const beep = document.getElementById('evm-beep');
-  if (beep) {
-    beep.style.display = 'block';
-    setTimeout(() => { if (beep) beep.style.display = 'none'; }, 900);
-  }
+  } catch(e) {}
+  const bd = document.getElementById('evm-beep');
+  if (bd) { bd.style.display='block'; setTimeout(()=>{ if(bd) bd.style.display='none'; }, 900); }
 }
 
-// ── VVPAT slip ───────────────────────────────────────────────
+/* ── VVPAT slip ─────────────────────────────────────────── */
 function _evmShowSlip(cand) {
-  const idle = document.getElementById('evm-vvpat-idle');
-  const slip = document.getElementById('evm-vvpat-slip');
-  if (!idle || !slip) return;
+  const idle  = document.getElementById('evm-slip-idle');
+  const paper = document.getElementById('evm-slip-paper');
+  if (!idle || !paper) return;
 
   idle.style.display = 'none';
-  slip.innerHTML = `
-    <div class="evm-slip-inner">
-      <div class="evm-slip-num">${cand.num}</div>
-      <div class="evm-slip-sym">${cand.symbol}</div>
-      <div class="evm-slip-name">${cand.name}</div>
-      <div class="evm-slip-party">${cand.party}</div>
-      <div class="evm-slip-seal">🔏 ECI</div>
-    </div>`;
-  slip.style.display = 'flex';
-  slip.classList.add('slip-animate-in');
+  paper.innerHTML = `
+    <div class="slip-serial">${cand.num}</div>
+    <div class="slip-sym">${cand.symbol}</div>
+    <div class="slip-name">${cand.name}</div>
+    <div class="slip-party">${cand.party}</div>
+    <div class="slip-seal">🔏 ECI</div>`;
+  paper.style.display = 'flex';
+  paper.classList.remove('slip-out');
+  paper.classList.add('slip-in');
 
-  // After 7 seconds drop slip and show result
   setTimeout(() => {
-    slip.classList.remove('slip-animate-in');
-    slip.classList.add('slip-animate-out');
-
+    paper.classList.remove('slip-in');
+    paper.classList.add('slip-out');
     setTimeout(() => {
       // LCD → VOTED
-      const lcdVal = document.getElementById('evm-lcd-val');
-      const lcdSub = document.getElementById('evm-lcd-sub');
-      if (lcdVal) { lcdVal.textContent = '✓'; lcdVal.style.color = '#00e676'; }
-      if (lcdSub) { lcdSub.textContent = 'VOTED'; }
-
-      // Show overlay after brief pause
+      const v = document.getElementById('evm-lcd-val');
+      const s = document.getElementById('evm-lcd-sub');
+      if (v) { v.textContent='✓'; v.style.color='#00e676'; v.style.textShadow='0 0 10px #00e676'; }
+      if (s) { s.textContent='VOTED'; }
+      // Success overlay
       setTimeout(() => {
-        const overlay = document.getElementById('evm-overlay');
-        if (overlay) overlay.style.display = 'flex';
+        const ov = document.getElementById('evm-success');
+        if (ov) ov.style.display='flex';
         if (typeof launchConfetti === 'function') launchConfetti();
         AppState.markComplete('evm');
         setVoiceText(t('evm_voted_title'));

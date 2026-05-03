@@ -244,7 +244,287 @@ body.font-lg{font-size:22px}
 .tl-perfect{background:var(--action-green);color:#fff;border-radius:var(--radius-lg);padding:var(--space-md);text-align:center;font-weight:var(--font-weight-bold);font-size:var(--font-size-body);margin-top:var(--space-md)}
 .tl-submit-btn{width:100%;margin-top:var(--space-md)}
 
-/* ── Realistic EVM (ECI Cream Design v3) ──────────────────── */
+/* ═══════════════════════════════════════════════════
+   REALISTIC EVM — SVG + HTML overlay (image-accurate)
+═══════════════════════════════════════════════════ */
+
+/* Page wrapper */
+.evm-page{
+  position:relative;
+  display:flex; flex-direction:column;
+  align-items:center;
+  gap:10px;
+  padding:10px 8px 100px;
+}
+
+/* Practice badge */
+.evm-practice-badge{
+  background:#C62828; color:#fff;
+  font-size:11px; font-weight:700;
+  letter-spacing:.06em;
+  padding:5px 20px;
+  border-radius:999px;
+  align-self:center;
+}
+
+/* ── Side-by-side CU + BU row ── */
+.evm-row-wrap{
+  display:flex;
+  align-items:flex-end;
+  gap:0;
+  width:100%;
+  max-width:420px;
+}
+
+/* Control Unit container */
+.evm-cu-wrap{
+  position:relative;
+  flex:0 0 130px;
+  width:130px;
+}
+.evm-cu-svg{
+  width:100%;
+  height:auto;
+  display:block;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.22));
+}
+
+/* LCD overlay on Control Unit */
+.evm-lcd-overlay{
+  position:absolute;
+  /* matches SVG rect x=26,y=30 at viewBox 0 0 140 210 → scale to 130px wide */
+  left:  calc(26/140 * 100%);
+  top:   calc(30/210 * 100%);
+  width: calc(88/140 * 100%);
+  height:calc(32/210 * 100%);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  pointer-events:none;
+  gap:1px;
+}
+.evm-lcd-digits{
+  font-family:'Courier New', monospace;
+  font-size:clamp(14px,4.2vw,22px);
+  font-weight:900;
+  color:#ff2020;
+  letter-spacing:.18em;
+  text-shadow:0 0 8px #ff2020, 0 0 2px #ff0000;
+  line-height:1;
+  transition:color .3s, text-shadow .3s;
+}
+.evm-lcd-sub{
+  font-family:monospace;
+  font-size:clamp(6px,2vw,9px);
+  color:rgba(255,60,60,.7);
+  letter-spacing:.12em;
+  font-weight:700;
+}
+
+/* Beep dot */
+.evm-beep-dot{
+  position:absolute;
+  bottom:28px; right:10px;
+  width:18px; height:18px;
+  border-radius:50%;
+  background:#00e676;
+  box-shadow:0 0 14px #00e676;
+  animation:evmGlow .8s ease infinite;
+  pointer-events:none;
+}
+
+/* Cable SVG */
+.evm-cable-svg{
+  flex:0 0 24px;
+  width:24px;
+  height:auto;
+  align-self:center;
+  margin-bottom:30px;
+}
+
+/* Ballot Unit container */
+.evm-bu-wrap{
+  position:relative;
+  flex:1;
+  min-width:0;
+}
+.evm-bu-svg{
+  width:100%;
+  height:auto;
+  display:block;
+  filter:drop-shadow(0 4px 14px rgba(0,0,0,.2));
+  /* Slight perspective tilt matching real EVM angle */
+  transform:perspective(600px) rotateX(3deg);
+  transform-origin:top center;
+}
+
+/* Candidate name overlay — positioned over SVG */
+.evm-names-overlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.evm-name-row{
+  position:absolute;
+  left:calc(26/220 * 100%);   /* after serial num col */
+  right:calc(52/220 * 100%);  /* before dot + button */
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:0 4px;
+  border-radius:3px;
+  transition:background .15s;
+}
+.evm-name-row.evm-row-active{
+  background:rgba(0,200,83,.18);
+}
+.evm-name-sym{ font-size:clamp(12px,3.5vw,18px); flex-shrink:0 }
+.evm-name-text{
+  display:flex; flex-direction:column;
+  min-width:0; overflow:hidden;
+}
+.evm-name-main{
+  font-size:clamp(8px,2.5vw,12px);
+  font-weight:700; color:#111;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.evm-name-party{
+  font-size:clamp(6px,1.8vw,9px);
+  color:#555;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* Interactive VOTE buttons overlay */
+.evm-btns-overlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.evm-vote-btn{
+  position:absolute;
+  /* Matches SVG x=185, width=40 in viewBox 220 */
+  left:   calc(185/220 * 100%);
+  width:  calc(40/220 * 100%);
+  height: calc(22/210 * 100%);
+  background:linear-gradient(180deg,#2855C8 0%,#1565C0 100%);
+  border:none;
+  border-radius:3px;
+  box-shadow:0 3px 0 #0D47A1, 0 4px 8px rgba(0,0,0,.25);
+  cursor:pointer;
+  pointer-events:all;
+  transition:transform .08s, box-shadow .08s;
+}
+.evm-vote-btn::after{
+  content:'VOTE';
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff;
+  font-size:clamp(5px,1.6vw,8px);
+  font-weight:900;
+  letter-spacing:.06em;
+}
+.evm-vote-btn:active,
+.evm-vote-btn.evm-btn-down{
+  transform:translateY(2px);
+  box-shadow:0 1px 0 #0D47A1;
+}
+.evm-vote-btn:disabled{
+  opacity:.45; cursor:not-allowed;
+}
+
+/* SVG dot glow effect (applied via JS setAttribute) */
+.svg-dot{ transition:fill .25s }
+
+/* ── VVPAT unit ── */
+.evm-vvpat-wrap{
+  position:relative;
+  width:100%;
+  max-width:300px;
+}
+.evm-vvpat-svg{
+  width:100%;
+  height:auto;
+  display:block;
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,.18));
+}
+
+/* Slip window overlay — matches SVG rect x=60,y=22 w=80 h=40 in viewBox 200x80 */
+.evm-slip-window{
+  position:absolute;
+  left:   calc(62/200 * 100%);
+  top:    calc(24/80  * 100%);
+  width:  calc(76/200 * 100%);
+  height: calc(36/80  * 100%);
+  overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+}
+.evm-slip-idle{
+  color:#2a2a2a;
+  font-size:clamp(8px,3vw,14px);
+  letter-spacing:.3em;
+}
+.evm-slip-paper{
+  display:none;
+  position:absolute; inset:0;
+  background:#fff;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:1px;
+  padding:2px;
+}
+.evm-slip-paper.slip-in{
+  animation:vvpatSlideIn .5s ease forwards;
+}
+.evm-slip-paper.slip-out{
+  animation:vvpatSlideOut .5s ease forwards;
+}
+@keyframes vvpatSlideIn{
+  from{transform:translateY(110%);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+@keyframes vvpatSlideOut{
+  from{transform:translateY(0);opacity:1}
+  to{transform:translateY(110%);opacity:0}
+}
+.slip-serial{ font-size:6px; font-weight:700; color:#444; border-bottom:1px solid #eee; width:100%; text-align:center; padding-bottom:1px }
+.slip-sym{ font-size:clamp(10px,3vw,18px) }
+.slip-name{ font-size:clamp(5px,1.8vw,8px); font-weight:700; color:#000; text-align:center; line-height:1.2 }
+.slip-party{ font-size:5px; color:#555; text-align:center }
+.slip-seal{ font-size:5px; color:#888 }
+
+/* ── Status text ── */
+.evm-status-text{
+  font-size:13px; color:var(--text-secondary);
+  text-align:center; padding:0 12px;
+}
+
+/* ── Success overlay ── */
+.evm-success-overlay{
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.78);
+  display:flex; align-items:center; justify-content:center;
+  z-index:50;
+  animation:fadeInUp .3s ease;
+}
+.evm-success-box{
+  background:#fff;
+  border-radius:20px;
+  padding:28px 24px;
+  text-align:center;
+  max-width:260px;
+  display:flex; flex-direction:column;
+  gap:10px;
+}
+.evm-success-ico{ font-size:52px }
+.evm-success-title{
+  font-size:18px; font-weight:700;
+  color:var(--action-green);
+}
+.evm-success-desc{
+  font-size:13px; color:var(--text-secondary);
+}
+
 :root{
   --evm-cream:     #F0EDE8;
   --evm-cream-dk:  #E4E0D8;
