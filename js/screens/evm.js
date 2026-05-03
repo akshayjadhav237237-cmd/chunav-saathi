@@ -126,6 +126,13 @@ function renderEvm() {
           <!-- Indicator (red dot, becomes green) -->
           <circle cx="163" cy="${BU_TOP + i*ROW_H + ROW_H/2}" r="5"
             fill="#CC0000" id="svg-dot-${i}" class="svg-dot"/>
+          <!-- Blue button rect outline (actual button is HTML) -->
+          <rect x="171" y="${BU_TOP + i*ROW_H + 7}" width="42" height="${BTN_H}" rx="3"
+            fill="#1565C0" stroke="#0D47A1" stroke-width="1"
+            class="svg-vote-btn-bg" id="svg-btn-bg-${i}"/>
+          <text x="192" y="${BU_TOP + i*ROW_H + 7 + BTN_H/2 + 3}"
+            text-anchor="middle" font-size="7" fill="#fff"
+            font-family="sans-serif" font-weight="900">VOTE</text>
         `).join('')}
         <!-- Last row border -->
         <line x1="2" y1="${BU_TOP + candidates.length*ROW_H}" x2="238"

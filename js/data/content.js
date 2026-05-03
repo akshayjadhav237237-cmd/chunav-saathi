@@ -354,7 +354,6 @@ const GAME_TIMELINE_DATA = {
       { id:6, label:'Vote Counting & Results', icon:'🏆', order:6, exp:'Votes are counted and winner declared.' }
     ]
   }
-  }
 };
 
 // Map existing game data into CONTENT[lang].games
