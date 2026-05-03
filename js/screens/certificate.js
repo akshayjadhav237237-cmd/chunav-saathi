@@ -1,4 +1,8 @@
 // CHUNAV SAATHI — certificate.js
+/**
+ * Renders the Certificate screen
+ * @returns {void}
+ */
 function renderCertificate() {
   const el = document.getElementById('screen-certificate');
   const lang = AppState.lang || 'mr';
@@ -40,6 +44,11 @@ function renderCertificate() {
   setVoiceText(t('cert_title'));
 }
 
+/**
+ * Sanitizes input to prevent XSS
+ * @param {string} str - The input string
+ * @returns {string} Sanitized string
+ */
 function sanitizeInput(str) {
   return str
     .replace(/&/g, '&amp;')
@@ -51,37 +60,56 @@ function sanitizeInput(str) {
     .slice(0, 100);
 }
 
+/**
+ * Generates and displays the certificate
+ * @returns {void}
+ */
 function generateCertificate() {
-  const nameInput = document.getElementById('cert-name-input');
-  let name = (nameInput && nameInput.value.trim()) || AppState.userName.trim();
-  name = sanitizeInput(name);
-  if (!name) {
-    showToast(AppState.lang === 'en' ? 'Please enter your name.' : AppState.lang === 'hi' ? 'कृपया अपना नाम लिखें।' : 'कृपया तुमचे नाव लिहा.');
-    return;
+  try {
+    const nameInput = document.getElementById('cert-name-input');
+    let name = (nameInput && nameInput.value.trim()) || AppState.userName.trim();
+    name = sanitizeInput(name);
+    if (!name) {
+      showToast(AppState.lang === 'en' ? 'Please enter your name.' : AppState.lang === 'hi' ? 'कृपया अपना नाम लिखें।' : 'कृपया तुमचे नाव लिहा.');
+      return;
+    }
+
+    AppState.userName = name;
+    localStorage.setItem('cs_name', name);
+
+    const card = document.getElementById('cert-card');
+    const displayName = document.getElementById('cert-display-name');
+    const shareBtns = document.getElementById('cert-share-btns');
+
+    if (displayName) displayName.textContent = name;
+    if (card) card.classList.add('show');
+    if (shareBtns) shareBtns.style.display = 'flex';
+
+    AppState.markComplete('certificate');
+    
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'certificate_generated', {
+        language: AppState.lang
+      });
+    }
+
+    // Scroll to certificate
+    setTimeout(() => {
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 200);
+
+    // Confetti
+    launchConfetti();
+  } catch(e) {
+    console.error('Certificate error:', e);
+    showToast('Certificate generation failed.');
   }
-
-  AppState.userName = name;
-  localStorage.setItem('cs_name', name);
-
-  const card = document.getElementById('cert-card');
-  const displayName = document.getElementById('cert-display-name');
-  const shareBtns = document.getElementById('cert-share-btns');
-
-  if (displayName) displayName.textContent = name;
-  if (card) card.classList.add('show');
-  if (shareBtns) shareBtns.style.display = 'flex';
-
-  AppState.markComplete('certificate');
-
-  // Scroll to certificate
-  setTimeout(() => {
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 200);
-
-  // Confetti
-  launchConfetti();
 }
 
+/**
+ * Resets the certificate generator
+ * @returns {void}
+ */
 function newCertificate() {
   const card = document.getElementById('cert-card');
   const shareBtns = document.getElementById('cert-share-btns');
@@ -91,6 +119,10 @@ function newCertificate() {
   if (input) { input.value = ''; input.focus(); }
 }
 
+/**
+ * Shares the generated certificate
+ * @returns {void}
+ */
 function shareCertificate() {
   const lang = AppState.lang || 'mr';
   const msg = lang === 'en'

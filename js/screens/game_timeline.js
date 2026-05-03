@@ -1,5 +1,9 @@
 let gtState = { order: [], submitted: false, score: 0 };
 
+/**
+ * Renders the Timeline game
+ * @returns {void}
+ */
 function renderGameTimeline() {
   const el = document.getElementById('screen-game_timeline');
   const lang = AppState.lang || 'mr';
@@ -73,6 +77,12 @@ function renderGameTimeline() {
   `;
 }
 
+/**
+ * Moves a card in the timeline game
+ * @param {number} idx - Index of the card
+ * @param {number} dir - Direction (-1 for up, 1 for down)
+ * @returns {void}
+ */
 window.gtMove = function(idx, dir) {
   let temp = gtState.order[idx];
   gtState.order[idx] = gtState.order[idx + dir];
@@ -80,6 +90,10 @@ window.gtMove = function(idx, dir) {
   renderGameTimeline();
 }
 
+/**
+ * Submits the timeline game answer
+ * @returns {void}
+ */
 window.gtSubmit = function() {
   gtState.submitted = true;
   gtState.score = 0;
@@ -87,5 +101,11 @@ window.gtSubmit = function() {
     if (item.order === idx + 1) gtState.score++;
   });
   AppState.markComplete('game_timeline');
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'game_complete', {
+      game_name: 'game_timeline',
+      language: AppState.lang
+    });
+  }
   renderGameTimeline();
 }

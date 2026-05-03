@@ -1,4 +1,9 @@
 // CHUNAV SAATHI — settings.js
+
+/**
+ * Renders the settings screen
+ * @returns {void}
+ */
 function renderSettings() {
   const el = document.getElementById('screen-settings');
   const lang = AppState.lang || 'mr';
@@ -81,11 +86,28 @@ function renderSettings() {
         </button>
       </div>
 
-    </div>`;
+      <div id="google_translate_element" style="margin-top:16px;opacity:0.7;"></div>
+    </div>
+    <script>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'mr',
+          includedLanguages: 'mr,hi,en,gu,ta,te,bn',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+      }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    `;
 
   setVoiceText(sc.settings_title);
 }
 
+/**
+ * Changes language from settings
+ * @param {string} code - Language code
+ * @returns {void}
+ */
 function settingsSetLang(code) {
   AppState.setLang(code);
   renderSettings();
@@ -93,6 +115,11 @@ function settingsSetLang(code) {
   if (AppState.screen !== 'settings') navigate(AppState.screen);
 }
 
+/**
+ * Sets text size from settings
+ * @param {string} cls - Font size class
+ * @returns {void}
+ */
 function settingsSetFontSize(cls) {
   localStorage.setItem('cs_fontsize', cls);
   document.body.classList.remove('font-sm','font-md','font-lg');
@@ -100,11 +127,20 @@ function settingsSetFontSize(cls) {
   renderSettings();
 }
 
+/**
+ * Sets voice speed from settings
+ * @param {string} k - Speed key
+ * @returns {void}
+ */
 function settingsSetVoiceSpeed(k) {
   localStorage.setItem('cs_voice_speed', k);
   renderSettings();
 }
 
+/**
+ * Resets all user progress and data
+ * @returns {void}
+ */
 function settingsReset() {
   const lang = AppState.lang || 'mr';
   const sc = SETTINGS_CONTENT[lang] || SETTINGS_CONTENT['mr'];

@@ -1,6 +1,10 @@
 // CHUNAV SAATHI — rules.js
 let _rulesTab = 'do';
 
+/**
+ * Renders the Rules screen
+ * @returns {void}
+ */
 function renderRules() {
   _rulesTab = 'do';
   const el = document.getElementById('screen-rules');
@@ -33,6 +37,11 @@ function buildRuleItems(type) {
     </div>`).join('');
 }
 
+/**
+ * Switches the active rules tab
+ * @param {string} tab - Tab identifier ('do' or 'dont')
+ * @returns {void}
+ */
 function switchRulesTab(tab) {
   _rulesTab = tab;
   document.querySelectorAll('.rules-tab').forEach(t => t.classList.remove('active'));

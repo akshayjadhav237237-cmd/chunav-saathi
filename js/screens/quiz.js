@@ -1,6 +1,10 @@
 // CHUNAV SAATHI — quiz.js
 let _qState = { idx: 0, score: 0, answered: false, started: false };
 
+/**
+ * Renders the Quiz screen
+ * @returns {void}
+ */
 function renderQuiz() {
   _qState = { idx: 0, score: 0, answered: false, started: false };
   const el = document.getElementById('screen-quiz');
@@ -22,11 +26,19 @@ function renderQuiz() {
   setVoiceText(t('quiz_title'));
 }
 
+/**
+ * Starts the quiz
+ * @returns {void}
+ */
 function startQuiz() {
   _qState = { idx: 0, score: 0, answered: false, started: true };
   renderQuestion();
 }
 
+/**
+ * Renders the current question
+ * @returns {void}
+ */
 function renderQuestion() {
   const lang = AppState.lang || 'mr';
   const questions = QUIZ_DATA[lang];
@@ -59,6 +71,11 @@ function renderQuestion() {
   setVoiceText(q.q + '. ' + q.opts.join('. '));
 }
 
+/**
+ * Evaluates the chosen answer
+ * @param {number} chosen - The index of the chosen option
+ * @returns {void}
+ */
 function answerQuiz(chosen) {
   if (_qState.answered) return;
   _qState.answered = true;
@@ -103,6 +120,10 @@ function answerQuiz(chosen) {
   document.getElementById('screen-container').scrollTo({ top: document.getElementById('screen-container').scrollHeight, behavior: 'smooth' });
 }
 
+/**
+ * Advances to the next question
+ * @returns {void}
+ */
 function nextQuestion() {
   _qState.idx++;
   _qState.answered = false;
@@ -110,6 +131,10 @@ function nextQuestion() {
   document.getElementById('screen-container').scrollTop = 0;
 }
 
+/**
+ * Renders the final quiz report
+ * @returns {void}
+ */
 function renderQuizReport() {
   const lang = AppState.lang || 'mr';
   const total = QUIZ_DATA[lang].length;
@@ -134,5 +159,12 @@ function renderQuizReport() {
     </div>`;
 
   AppState.markComplete('quiz');
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'quiz_complete', {
+      score: _qState.score,
+      total: total,
+      language: AppState.lang
+    });
+  }
   setVoiceText(`${t('quiz_score_label')}: ${_qState.score} ${t('quiz_out_of')} ${total}`);
 }

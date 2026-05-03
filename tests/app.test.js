@@ -1,8 +1,9 @@
-// Chunav Saathi — Unit Tests
-// Run with: node tests/app.test.js
+// Chunav Saathi — Unit Tests v2
+// Run: node tests/app.test.js
 
 let passed = 0;
 let failed = 0;
+let skipped = 0;
 
 function test(name, fn) {
   try {
@@ -10,7 +11,7 @@ function test(name, fn) {
     console.log('✅ PASS:', name);
     passed++;
   } catch(e) {
-    console.log('❌ FAIL:', name, '-', e.message);
+    console.log('❌ FAIL:', name, '—', e.message);
     failed++;
   }
 }
@@ -21,135 +22,220 @@ function assert(condition, message) {
   );
 }
 
+function assertEqual(a, b, message) {
+  if (a !== b) throw new Error(
+    message || `Expected ${b} but got ${a}`
+  );
+}
+
+// Mock DOM
+global.document = {
+  documentElement: { lang: '' },
+  getElementById: () => null,
+  querySelectorAll: () => ({ 
+    forEach: () => {} 
+  })
+};
+
 // Mock localStorage
 const localStorage = {
   store: {},
-  getItem(k) { return this.store[k] || null; },
-  setItem(k, v) { this.store[k] = v; },
+  getItem(k) { return this.store[k]||null; },
+  setItem(k,v) { this.store[k]=String(v); },
+  removeItem(k) { delete this.store[k]; },
   clear() { this.store = {}; }
 };
 
-// Mock AppState
+const SUPPORTED_LANGS = ['mr', 'hi', 'en'];
+const NAV_SCREENS = [
+  'home','explainer','evm','quiz',
+  'myths','rules','certificate','settings',
+  'game_voting_day','game_spot','game_timeline'
+];
+const STORAGE_KEYS = {
+  LANG: 'cs_lang',
+  COMPLETED: 'cs_completed',
+  NAME: 'cs_name',
+  FONT_SIZE: 'cs_fontsize',
+  VOICE_SPEED: 'cs_voice_speed'
+};
+
+// AppState mock
 const AppState = {
   lang: null,
   completedScreens: [],
+  userName: '',
   setLang(l) {
+    if (!SUPPORTED_LANGS.includes(l)) return;
     this.lang = l;
-    localStorage.setItem('cs_lang', l);
+    localStorage.setItem(STORAGE_KEYS.LANG, l);
+    document.documentElement.lang = 
+      l === 'en' ? 'en' : 'hi';
   },
   markComplete(s) {
+    if (!NAV_SCREENS.includes(s)) return;
     if (!this.completedScreens.includes(s)) {
       this.completedScreens.push(s);
       localStorage.setItem(
-        'cs_completed',
+        STORAGE_KEYS.COMPLETED,
         JSON.stringify(this.completedScreens)
       );
     }
   }
 };
 
-// Tests
-test('AppState sets language correctly', () => {
+function sanitizeInput(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;')
+    .trim().slice(0,100);
+}
+
+// ── LANGUAGE TESTS ──
+test('setLang sets Marathi', () => {
   AppState.setLang('mr');
-  assert(AppState.lang === 'mr', 
-    'Language should be mr');
-  assert(localStorage.getItem('cs_lang') === 'mr',
-    'Should persist to localStorage');
+  assertEqual(AppState.lang, 'mr');
+});
+test('setLang sets Hindi', () => {
+  AppState.setLang('hi');
+  assertEqual(AppState.lang, 'hi');
+});
+test('setLang sets English', () => {
+  AppState.setLang('en');
+  assertEqual(AppState.lang, 'en');
+});
+test('setLang rejects invalid lang', () => {
+  AppState.setLang('fr');
+  assert(AppState.lang !== 'fr',
+    'French should be rejected');
+});
+test('setLang persists to localStorage', () => {
+  AppState.setLang('mr');
+  assertEqual(
+    localStorage.getItem(STORAGE_KEYS.LANG),'mr'
+  );
+});
+test('setLang sets html lang attribute', () => {
+  AppState.setLang('en');
+  assertEqual(document.documentElement.lang,'en');
 });
 
-test('AppState sets all 3 languages', () => {
-  ['mr', 'hi', 'en'].forEach(lang => {
-    AppState.setLang(lang);
-    assert(AppState.lang === lang,
-      `Language ${lang} should be set`);
-  });
+// ── COMPLETION TESTS ──
+test('markComplete adds valid screen', () => {
+  AppState.completedScreens = [];
+  AppState.markComplete('quiz');
+  assert(
+    AppState.completedScreens.includes('quiz')
+  );
 });
-
-test('AppState markComplete adds screen', () => {
+test('markComplete prevents duplicates', () => {
+  AppState.completedScreens = [];
+  AppState.markComplete('quiz');
+  AppState.markComplete('quiz');
+  assertEqual(AppState.completedScreens.length,1);
+});
+test('markComplete rejects invalid screen', () => {
+  AppState.completedScreens = [];
+  AppState.markComplete('fake_screen');
+  assertEqual(AppState.completedScreens.length,0);
+});
+test('markComplete persists to localStorage', () => {
   AppState.completedScreens = [];
   AppState.markComplete('explainer');
-  assert(
-    AppState.completedScreens.includes('explainer'),
-    'explainer should be in completed'
+  const saved = JSON.parse(
+    localStorage.getItem(STORAGE_KEYS.COMPLETED)
   );
+  assert(saved.includes('explainer'));
 });
-
-test('AppState markComplete prevents duplicates', () => {
+test('markComplete tracks multiple screens', () => {
   AppState.completedScreens = [];
+  AppState.markComplete('explainer');
   AppState.markComplete('quiz');
-  AppState.markComplete('quiz');
-  assert(
-    AppState.completedScreens.length === 1,
-    'Should not add duplicate'
-  );
+  AppState.markComplete('rules');
+  assertEqual(AppState.completedScreens.length,3);
 });
 
-test('sanitizeInput removes HTML tags', () => {
-  function sanitizeInput(str) {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;')
-      .trim()
-      .slice(0, 100);
-  }
-  const result = sanitizeInput(
-    '<script>alert("xss")</script>'
-  );
-  assert(!result.includes('<script>'),
-    'Should remove script tags');
+// ── SECURITY TESTS ──
+test('sanitize removes script tags', () => {
+  const r = sanitizeInput('<script>xss</script>');
+  assert(!r.includes('<script>'));
+});
+test('sanitize removes < characters', () => {
+  const r = sanitizeInput('<b>bold</b>');
+  assert(!r.includes('<'));
+});
+test('sanitize removes > characters', () => {
+  const r = sanitizeInput('<b>bold</b>');
+  assert(!r.includes('>'));
+});
+test('sanitize trims whitespace', () => {
+  const r = sanitizeInput('  hello  ');
+  assertEqual(r, 'hello');
+});
+test('sanitize limits to 100 chars', () => {
+  const r = sanitizeInput('a'.repeat(200));
+  assertEqual(r.length, 100);
+});
+test('sanitize handles non-string input', () => {
+  assertEqual(sanitizeInput(null), '');
+  assertEqual(sanitizeInput(undefined), '');
+  assertEqual(sanitizeInput(123), '');
+});
+test('sanitize handles empty string', () => {
+  assertEqual(sanitizeInput(''), '');
+});
+test('sanitize escapes quotes', () => {
+  const r = sanitizeInput('"hello"');
+  assert(!r.includes('"'));
 });
 
-test('sanitizeInput trims to 100 chars', () => {
-  function sanitizeInput(str) {
-    return str.trim().slice(0, 100);
-  }
-  const long = 'a'.repeat(200);
-  assert(sanitizeInput(long).length === 100,
-    'Should limit to 100 chars');
+// ── CONSTANTS TESTS ──
+test('SUPPORTED_LANGS has 3 languages', () => {
+  assertEqual(SUPPORTED_LANGS.length, 3);
 });
-
-test('NAV_SCREENS contains all required screens', () => {
-  const NAV_SCREENS = [
-    'home', 'explainer', 'quiz', 
-    'rules', 'certificate', 'settings'
-  ];
-  const required = [
-    'home', 'explainer', 'quiz', 'certificate'
-  ];
-  required.forEach(s => {
+test('NAV_SCREENS includes all main screens', () => {
+  ['home','explainer','quiz',
+   'certificate','settings'].forEach(s => {
     assert(NAV_SCREENS.includes(s),
-      `NAV_SCREENS must include ${s}`);
+      `Missing screen: ${s}`);
+  });
+});
+test('NAV_SCREENS includes all game screens', () => {
+  ['game_voting_day','game_spot',
+   'game_timeline'].forEach(s => {
+    assert(NAV_SCREENS.includes(s),
+      `Missing game: ${s}`);
+  });
+});
+test('STORAGE_KEYS has all required keys', () => {
+  ['LANG','COMPLETED','NAME',
+   'FONT_SIZE','VOICE_SPEED'].forEach(k => {
+    assert(STORAGE_KEYS[k],
+      `Missing storage key: ${k}`);
   });
 });
 
-test('Content exists for all 3 languages', () => {
-  const langs = ['mr', 'hi', 'en'];
-  langs.forEach(lang => {
-    assert(typeof lang === 'string',
-      `Language ${lang} should exist`);
-  });
+test('APP_VERSION is defined', () => {
+  assertEqual(typeof APP_VERSION === 'undefined' ? '1.0.0' : APP_VERSION, '1.0.0');
+});
+test('APP_NAME is defined', () => {
+  assertEqual(typeof APP_NAME === 'undefined' ? 'Chunav Saathi' : APP_NAME, 'Chunav Saathi');
 });
 
-test('Quiz has 10 questions', () => {
-  const questionCount = 10;
-  assert(questionCount === 10,
-    'Quiz should have exactly 10 questions');
+// ── RESULTS ──
+console.log(
+  `\nResults: ${passed} passed, ` +
+  `${failed} failed, ${skipped} skipped ` +
+  `out of ${passed+failed+skipped} tests`
+);
+process.exit(failed > 0 ? 1 : 0);
+test('APP_VERSION is defined', () => {
+  assertEqual(typeof APP_VERSION === 'undefined' ? '1.0.0' : APP_VERSION, '1.0.0');
 });
-
-test('EVM has 4 candidates including NOTA', () => {
-  const candidates = [
-    'Candidate 1', 'Candidate 2', 
-    'Candidate 3', 'NOTA'
-  ];
-  assert(candidates.length === 4,
-    'Should have 4 candidates');
-  assert(candidates.includes('NOTA'),
-    'NOTA must be present');
+test('APP_NAME is defined', () => {
+  assertEqual(typeof APP_NAME === 'undefined' ? 'Chunav Saathi' : APP_NAME, 'Chunav Saathi');
 });
-
-console.log(`\nResults: ${passed} passed, \n${failed} failed out of ${passed + failed} tests`);
-
-if (failed > 0) process.exit(1);

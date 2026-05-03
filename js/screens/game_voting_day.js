@@ -1,5 +1,9 @@
 let gvdState = { step: 0, score: 0, done: false };
 
+/**
+ * Renders the Voting Day scenario game
+ * @returns {void}
+ */
 function renderGameVotingDay() {
   const el = document.getElementById('screen-game_voting_day');
   const lang = AppState.lang || 'mr';
@@ -36,6 +40,11 @@ function renderGameVotingDay() {
   `;
 }
 
+/**
+ * Handles user selection in Voting Day game
+ * @param {number} idx - Index of the chosen option
+ * @returns {void}
+ */
 window.gvdPick = function(idx) {
   const lang = AppState.lang || 'mr';
   const data = CONTENT[lang].games;
@@ -57,6 +66,12 @@ window.gvdPick = function(idx) {
       if (gvdState.step >= data.voting_day_decisions.length) {
         gvdState.done = true;
         AppState.markComplete('game_voting_day');
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'game_complete', {
+            game_name: 'game_voting_day',
+            language: AppState.lang
+          });
+        }
       }
       renderGameVotingDay();
     };

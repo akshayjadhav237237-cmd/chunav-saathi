@@ -1,4 +1,8 @@
 // CHUNAV SAATHI — language.js
+/**
+ * Renders the initial Language Selection screen
+ * @returns {void}
+ */
 function renderLanguageScreen() {
   const app = document.getElementById('app');
   const ls = document.createElement('div');

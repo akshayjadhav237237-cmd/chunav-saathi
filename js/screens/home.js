@@ -1,4 +1,8 @@
 // CHUNAV SAATHI — home.js
+/**
+ * Renders the Home screen
+ * @returns {void}
+ */
 function renderHome() {
   const el = document.getElementById('screen-home');
   const cards = t('home_cards');

@@ -1,5 +1,9 @@
 let gsState = { current: 0, score: 0, answers: [] };
 
+/**
+ * Renders the Spot Violation game
+ * @returns {void}
+ */
 function renderGameSpot() {
   const el = document.getElementById('screen-game_spot');
   const lang = AppState.lang || 'mr';
@@ -24,6 +28,12 @@ function renderGameSpot() {
       </div>
     `;
     AppState.markComplete('game_spot');
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'game_complete', {
+        game_name: 'game_spot',
+        language: AppState.lang
+      });
+    }
     return;
   }
   
@@ -49,6 +59,11 @@ function renderGameSpot() {
   `;
 }
 
+/**
+ * Handles answering a spot violation scenario
+ * @param {string} ans - 'violation' or 'allowed'
+ * @returns {void}
+ */
 window.gsPick = function(ans) {
   const lang = AppState.lang || 'mr';
   const data = CONTENT[lang].games;

@@ -1013,3 +1013,34 @@ body.font-lg{font-size:22px}
 .skip-link:focus {
   top: 0;
 }
+
+/* PERFORMANCE & ACCESSIBILITY */
+.screen { 
+  contain: layout style;
+  will-change: auto;
+}
+.bottom-nav {
+  contain: layout style paint;
+}
+img, .card-icon {
+  content-visibility: auto;
+}
+.bottom-nav-item, .card, .game-option, .violation-btn, .allowed-btn, button {
+  min-height: 44px;
+  min-width: 44px;
+}
+button:focus, a:focus, [tabindex]:focus {
+  outline: 3px solid #1565C0;
+  outline-offset: 2px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -3,6 +3,10 @@ let _evmSelected = null;
 let _evmVoted    = false;
 let _blinkTimer  = null;
 
+/**
+ * Renders the EVM Simulator screen
+ * @returns {void}
+ */
 function renderEvm() {
   _evmSelected = null;
   _evmVoted    = false;
@@ -228,6 +232,10 @@ function renderEvm() {
 }
 
 /* ── LCD blink ──────────────────────────────────────────── */
+/**
+ * Starts blinking the LCD on the EVM Control Unit
+ * @returns {void}
+ */
 function _evmStartBlink() {
   let show = true;
   _blinkTimer = setInterval(() => {
@@ -239,6 +247,11 @@ function _evmStartBlink() {
 }
 
 /* ── Vote button press ──────────────────────────────────── */
+/**
+ * Handles pressing a vote button on the EVM
+ * @param {number} idx - Index of the candidate pressed
+ * @returns {void}
+ */
 function evmPress(idx) {
   if (_evmVoted) return;
   clearInterval(_blinkTimer);
@@ -293,6 +306,10 @@ function evmPress(idx) {
 }
 
 /* ── Web Audio beep ─────────────────────────────────────── */
+/**
+ * Beeps using Web Audio API
+ * @returns {void}
+ */
 function _evmBeep() {
   try {
     const ctx  = new (window.AudioContext || window.webkitAudioContext)();
@@ -311,6 +328,11 @@ function _evmBeep() {
 }
 
 /* ── VVPAT slip ─────────────────────────────────────────── */
+/**
+ * Shows the VVPAT slip
+ * @param {Object} cand - Candidate object
+ * @returns {void}
+ */
 function _evmShowSlip(cand) {
   const idle  = document.getElementById('evm-slip-idle');
   const paper = document.getElementById('evm-slip-paper');
@@ -342,10 +364,17 @@ function _evmShowSlip(cand) {
         if (ov) ov.style.display='flex';
         if (typeof launchConfetti === 'function') launchConfetti();
         AppState.markComplete('evm');
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'evm_vote_cast', { practice: true, language: AppState.lang });
+        }
         setVoiceText(t('evm_voted_title'));
       }, 500);
     }, 500);
   }, 7000);
 }
 
+/**
+ * Resets the EVM to its initial state
+ * @returns {void}
+ */
 function evmReset() { renderEvm(); }

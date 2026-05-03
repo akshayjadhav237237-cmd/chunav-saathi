@@ -1,4 +1,9 @@
-// CHUNAV SAATHI — app.js — Router, State, Navigation, SW registration
+const fs = require('fs');
+
+let appJs = fs.readFileSync('js/app.js', 'utf8');
+
+// Add JSDoc, Error Handling, Validation, Lazy Loading to app.js
+const appJsNew = `// CHUNAV SAATHI — app.js — Router, State, Navigation, SW registration
 
 /**
  * Global application state object
@@ -167,10 +172,10 @@ function buildShell() {
 
     const topBar = document.createElement('div');
     topBar.className = 'top-bar';
-    topBar.innerHTML = `
+    topBar.innerHTML = \`
       <button class="top-bar-back" id="top-bar-back" aria-label="Go back" onclick="navigate('home')" style="display:none">‹</button>
-      <span class="top-bar-title" id="top-bar-title">${APP_NAME}</span>
-      <button class="top-bar-voice" id="top-bar-voice" aria-label="Read page aloud" aria-live="polite" onclick="debouncedVoice()">🔊</button>`;
+      <span class="top-bar-title" id="top-bar-title">\${APP_NAME}</span>
+      <button class="top-bar-voice" id="top-bar-voice" aria-label="Read page aloud" aria-live="polite" onclick="debouncedVoice()">🔊</button>\`;
 
     const tricolor = document.createElement('div');
     tricolor.className = 'tricolor-bar';
@@ -201,11 +206,11 @@ function buildShell() {
     ];
     const bottomNav = document.createElement('nav');
     bottomNav.className = 'bottom-nav';
-    bottomNav.innerHTML = navItems.map(n => `
-      <button class="bottom-nav-item" data-screen="${n.screen}" onclick="navigate('${n.screen}')" aria-label="${n.label}" role="tab" aria-selected="false">
-        <span class="bottom-nav-icon">${n.icon}</span>
-        <span class="bottom-nav-label">${n.label}</span>
-      </button>`).join('');
+    bottomNav.innerHTML = navItems.map(n => \`
+      <button class="bottom-nav-item" data-screen="\${n.screen}" onclick="navigate('\${n.screen}')" aria-label="\${n.label}" role="tab" aria-selected="false">
+        <span class="bottom-nav-icon">\${n.icon}</span>
+        <span class="bottom-nav-label">\${n.label}</span>
+      </button>\`).join('');
 
     const fab = document.createElement('button');
     fab.className = 'voice-fab';
@@ -314,3 +319,6 @@ function onLanguageSelected(lang) {
     console.error('Lang select error:', e);
   }
 }
+`;
+fs.writeFileSync('js/app.js', appJsNew);
+console.log('app.js successfully updated.');

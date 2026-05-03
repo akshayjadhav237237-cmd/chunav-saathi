@@ -1,4 +1,8 @@
 // CHUNAV SAATHI — myths.js
+/**
+ * Renders the Myths screen
+ * @returns {void}
+ */
 function renderMyths() {
   const el = document.getElementById('screen-myths');
   const lang = AppState.lang || 'mr';
@@ -31,6 +35,11 @@ function renderMyths() {
   AppState.markComplete('myths');
 }
 
+/**
+ * Toggles a myth card open or closed
+ * @param {number} idx - The index of the myth card
+ * @returns {void}
+ */
 function toggleMyth(idx) {
   const card = document.getElementById('myth-' + idx);
   if (!card) return;
