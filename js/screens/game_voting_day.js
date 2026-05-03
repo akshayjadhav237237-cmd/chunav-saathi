@@ -1,84 +1,70 @@
-// CHUNAV SAATHI — game_voting_day.js
-let _gvdStep = 0;
-let _gvdScore = 0;
-let _gvdAnswered = false;
+let gvdState = { step: 0, score: 0, done: false };
 
 function renderGameVotingDay() {
-  _gvdStep = 0; _gvdScore = 0;
-  _renderGVDStep();
-}
-
-function _renderGVDStep() {
-  const lang = AppState.lang || 'mr';
-  const d = GAME_VOTING_DAY_DATA[lang] || GAME_VOTING_DAY_DATA['mr'];
   const el = document.getElementById('screen-game_voting_day');
-
-  if (_gvdStep >= d.decisions.length) {
-    // Completion screen
-    const perfect = _gvdScore === d.decisions.length;
+  const lang = AppState.lang || 'mr';
+  const data = CONTENT[lang].games;
+  
+  if (gvdState.done) {
     el.innerHTML = `
-      <div class="game-complete-screen">
-        <div class="game-complete-emoji">${perfect ? '🏆' : '⭐'}</div>
-        <div class="game-complete-msg">${d.complete}</div>
-        <div class="game-score-big">${_gvdScore} / ${d.decisions.length}</div>
-        ${perfect ? '<div class="game-badge">🎖️ Perfect Voter Badge Unlocked!</div>' : ''}
-        <button class="btn btn-primary" onclick="renderGameVotingDay()">${d.retry}</button>
-        <button class="btn btn-secondary" style="margin-top:10px" onclick="navigate('home')">← Home</button>
-      </div>`;
-    if (perfect) AppState.markComplete('game_voting_day');
-    setVoiceText(d.complete);
+      <div style="padding:20px; text-align:center;">
+        <h2>${data.voting_day_title}</h2>
+        <div class="badge-animation">🎉</div>
+        <h3>बॅज मिळाला! (Badge Earned!)</h3>
+        <p>Score: ${gvdState.score} / 5</p>
+        <button class="btn btn-primary" style="margin-top:20px;" onclick="gvdState={step:0,score:0,done:false}; renderGameVotingDay();">Play Again</button>
+      </div>
+    `;
     return;
   }
-
-  const dec = d.decisions[_gvdStep];
-  _gvdAnswered = false;
-
+  
+  const qData = data.voting_day_decisions[gvdState.step];
+  
   el.innerHTML = `
-    <div class="game-vd-screen">
-      <div class="game-progress-bar-wrap">
-        <div class="game-progress-bar" style="width:${(_gvdStep/d.decisions.length)*100}%"></div>
+    <div style="padding:20px;">
+      <h2>${data.voting_day_title}</h2>
+      <p>प्रश्न ${gvdState.step + 1} / 5</p>
+      <div class="game-question">${qData.q}</div>
+      <div id="gvd-opts">
+        ${qData.options.map((opt, i) => `<button class="game-option" onclick="gvdPick(${i})">${opt}</button>`).join('')}
       </div>
-      <div class="game-step-badge">${_gvdStep+1} / ${d.decisions.length}</div>
-      <div class="game-scenario-box">
-        <div class="game-scenario-icon">🤔</div>
-        <div class="game-scenario-q">${dec.q}</div>
+      <div id="gvd-feedback" style="display:none; margin-top:20px;">
+        <div class="game-explanation">${qData.explanation}</div>
+        <button class="btn btn-primary" id="gvd-next-btn" style="width:100%"></button>
       </div>
-      <div class="game-options">
-        ${dec.opts.map((opt, i) => `
-          <button class="game-option-btn" id="gvd-opt-${i}"
-            onclick="gvdAnswer(${i}, ${dec.ans})">
-            <span class="game-opt-letter">${String.fromCharCode(65+i)}</span>
-            ${opt}
-          </button>`).join('')}
-      </div>
-      <div class="game-explanation" id="gvd-exp" style="display:none">
-        <div class="game-exp-text">${dec.exp}</div>
-        <button class="btn btn-primary" onclick="_gvdNext()">${_gvdStep < d.decisions.length-1 ? d.next : d.finish}</button>
-      </div>
-    </div>`;
-
-  setVoiceText(dec.q);
+    </div>
+  `;
 }
 
-function gvdAnswer(chosen, correct) {
-  if (_gvdAnswered) return;
-  _gvdAnswered = true;
+window.gvdPick = function(idx) {
   const lang = AppState.lang || 'mr';
-  const d = GAME_VOTING_DAY_DATA[lang] || GAME_VOTING_DAY_DATA['mr'];
-  const dec = d.decisions[_gvdStep];
-
-  document.querySelectorAll('.game-option-btn').forEach((btn, i) => {
-    btn.disabled = true;
-    if (i === correct) btn.classList.add('correct');
-    else if (i === chosen && chosen !== correct) btn.classList.add('wrong');
-  });
-
-  if (chosen === correct) _gvdScore++;
-  document.getElementById('gvd-exp').style.display = 'block';
-  setVoiceText(dec.exp);
-}
-
-function _gvdNext() {
-  _gvdStep++;
-  _renderGVDStep();
+  const data = CONTENT[lang].games;
+  const qData = data.voting_day_decisions[gvdState.step];
+  
+  const opts = document.getElementById('gvd-opts').children;
+  for(let i=0; i<opts.length; i++) opts[i].disabled = true;
+  
+  const fb = document.getElementById('gvd-feedback');
+  const nextBtn = document.getElementById('gvd-next-btn');
+  fb.style.display = 'block';
+  
+  if (idx === qData.correct) {
+    opts[idx].classList.add('correct');
+    gvdState.score++;
+    nextBtn.textContent = 'पुढे जा';
+    nextBtn.onclick = () => {
+      gvdState.step++;
+      if (gvdState.step >= data.voting_day_decisions.length) {
+        gvdState.done = true;
+        AppState.markComplete('game_voting_day');
+      }
+      renderGameVotingDay();
+    };
+  } else {
+    opts[idx].classList.add('wrong');
+    nextBtn.textContent = 'पुन्हा प्रयत्न करा';
+    nextBtn.onclick = () => {
+      renderGameVotingDay();
+    };
+  }
 }

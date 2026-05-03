@@ -354,4 +354,28 @@ const GAME_TIMELINE_DATA = {
       { id:6, label:'Vote Counting & Results', icon:'🏆', order:6, exp:'Votes are counted and winner declared.' }
     ]
   }
+  }
 };
+
+// Map existing game data into CONTENT[lang].games
+['mr', 'hi', 'en'].forEach(lang => {
+  if (!CONTENT[lang].games) CONTENT[lang].games = {};
+  
+  CONTENT[lang].games.voting_day_title = GAME_VOTING_DAY_DATA[lang].title;
+  CONTENT[lang].games.voting_day_decisions = GAME_VOTING_DAY_DATA[lang].decisions.map(d => ({
+    q: d.q,
+    options: d.opts,
+    correct: d.ans,
+    explanation: d.exp
+  }));
+  
+  CONTENT[lang].games.spot_title = GAME_SPOT_DATA[lang].title;
+  CONTENT[lang].games.spot_scenarios = GAME_SPOT_DATA[lang].scenarios.map(s => ({
+    text: s.scene,
+    answer: s.isViolation ? 'violation' : 'allowed',
+    explanation: s.exp
+  }));
+  
+  CONTENT[lang].games.timeline_title = GAME_TIMELINE_DATA[lang].title;
+  CONTENT[lang].games.timeline_stages = GAME_TIMELINE_DATA[lang].stages;
+});

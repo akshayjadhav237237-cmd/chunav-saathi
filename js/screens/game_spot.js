@@ -1,92 +1,73 @@
-// CHUNAV SAATHI — game_spot.js
-let _spotIdx = 0;
-let _spotScore = 0;
-let _spotAnswered = false;
+let gsState = { current: 0, score: 0, answers: [] };
 
 function renderGameSpot() {
-  _spotIdx = 0; _spotScore = 0;
-  _renderSpotCard();
-}
-
-function _renderSpotCard() {
-  const lang = AppState.lang || 'mr';
-  const d = GAME_SPOT_DATA[lang] || GAME_SPOT_DATA['mr'];
   const el = document.getElementById('screen-game_spot');
-
-  if (_spotIdx >= d.scenarios.length) {
-    const total = d.scenarios.length;
-    const pct   = Math.round((_spotScore / total) * 100);
-    el.innerHTML = `
-      <div class="game-complete-screen">
-        <div class="game-complete-emoji">${pct >= 80 ? '🏆' : pct >= 50 ? '⭐' : '📚'}</div>
-        <div class="game-score-big">${_spotScore} / ${total}</div>
-        <div class="game-complete-msg">${d.finish}</div>
-        <button class="btn btn-primary" onclick="renderGameSpot()">${d.restart}</button>
-        <button class="btn btn-secondary" style="margin-top:10px" onclick="navigate('home')">← Home</button>
+  const lang = AppState.lang || 'mr';
+  const data = CONTENT[lang].games;
+  
+  if (gsState.current >= data.spot_scenarios.length) {
+    let resultHTML = gsState.answers.map((a, i) => {
+      const q = data.spot_scenarios[i];
+      return `<div style="margin-bottom:10px; padding:10px; border:1px solid #ccc; border-radius:8px;">
+        <p><strong>${q.text}</strong></p>
+        <p>Your answer: ${a === 'violation' ? '❌' : '✅'} | Correct: ${q.answer === 'violation' ? '❌' : '✅'}</p>
+        <p class="game-explanation">${q.explanation}</p>
       </div>`;
-    if (_spotScore === total) AppState.markComplete('game_spot');
+    }).join('');
+    
+    el.innerHTML = `
+      <div style="padding:20px;">
+        <h2>${data.spot_title}</h2>
+        <h3>Score: ${gsState.score} / ${data.spot_scenarios.length}</h3>
+        ${resultHTML}
+        <button class="btn btn-primary" style="margin-top:20px; width:100%" onclick="gsState={current:0,score:0,answers:[]}; renderGameSpot();">Play Again</button>
+      </div>
+    `;
+    AppState.markComplete('game_spot');
     return;
   }
-
-  const sc = d.scenarios[_spotIdx];
-  _spotAnswered = false;
-
+  
+  const qData = data.spot_scenarios[gsState.current];
+  
   el.innerHTML = `
-    <div class="game-spot-screen">
-      <div class="game-progress-bar-wrap">
-        <div class="game-progress-bar" style="width:${(_spotIdx/d.scenarios.length)*100}%"></div>
+    <div style="padding:20px;">
+      <h2>${data.spot_title}</h2>
+      <p>प्रश्न ${gsState.current + 1} / ${data.spot_scenarios.length}</p>
+      <div style="background:white; padding:20px; border-radius:12px; border:2px solid #ccc; margin:20px 0; font-size:18px;">
+        ${qData.text}
       </div>
-      <div class="game-step-badge">${_spotIdx+1} / ${d.scenarios.length} &nbsp;|&nbsp; ${d.score_label}: ${_spotScore}</div>
-      <div class="game-scenario-box spot-scenario">
-        <div class="game-scenario-icon">🔎</div>
-        <div class="game-scenario-q">${sc.scene}</div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:20px;" id="gs-opts">
+        <button class="violation-btn" onclick="gsPick('violation')">VIOLATION ❌</button>
+        <button class="allowed-btn" onclick="gsPick('allowed')">ALLOWED ✅</button>
       </div>
-      <div class="spot-btn-row">
-        <button class="spot-btn violation" id="spot-violation" onclick="spotAnswer(true)">
-          ${d.violation_btn}
-        </button>
-        <button class="spot-btn allowed" id="spot-allowed" onclick="spotAnswer(false)">
-          ${d.allowed_btn}
-        </button>
+      <div id="gs-feedback" style="display:none;">
+        <div id="gs-feedback-msg" style="font-size:20px; font-weight:bold; text-align:center; margin-bottom:10px;"></div>
+        <div class="game-explanation">${qData.explanation}</div>
+        <button class="btn btn-primary" style="width:100%" onclick="gsState.current++; renderGameSpot();">पुढे</button>
       </div>
-      <div class="game-explanation" id="spot-exp" style="display:none">
-        <div class="game-exp-text" id="spot-exp-text"></div>
-        <button class="btn btn-primary" onclick="_spotNext()">→</button>
-      </div>
-    </div>`;
-
-  setVoiceText(sc.scene);
+    </div>
+  `;
 }
 
-function spotAnswer(userSaidViolation) {
-  if (_spotAnswered) return;
-  _spotAnswered = true;
+window.gsPick = function(ans) {
   const lang = AppState.lang || 'mr';
-  const d = GAME_SPOT_DATA[lang] || GAME_SPOT_DATA['mr'];
-  const sc = d.scenarios[_spotIdx];
-  const correct = sc.isViolation === userSaidViolation;
-
-  if (correct) _spotScore++;
-
-  const vBtn = document.getElementById('spot-violation');
-  const aBtn = document.getElementById('spot-allowed');
-  [vBtn, aBtn].forEach(b => b.disabled = true);
-
-  if (userSaidViolation) {
-    vBtn.classList.add(correct ? 'correct' : 'wrong');
-    if (!correct) aBtn.classList.add('correct');
+  const data = CONTENT[lang].games;
+  const qData = data.spot_scenarios[gsState.current];
+  
+  document.getElementById('gs-opts').style.pointerEvents = 'none';
+  const fb = document.getElementById('gs-feedback');
+  const fbMsg = document.getElementById('gs-feedback-msg');
+  
+  gsState.answers.push(ans);
+  
+  if (ans === qData.answer) {
+    gsState.score++;
+    fbMsg.textContent = '✅ बरोबर (Correct)';
+    fbMsg.style.color = '#2E7D32';
   } else {
-    aBtn.classList.add(correct ? 'correct' : 'wrong');
-    if (!correct) vBtn.classList.add('correct');
+    fbMsg.textContent = '❌ चुकीचे (Incorrect)';
+    fbMsg.style.color = '#C62828';
   }
-
-  const expEl = document.getElementById('spot-exp');
-  document.getElementById('spot-exp-text').textContent = (correct ? '✅ ' : '❌ ') + sc.exp;
-  expEl.style.display = 'block';
-  setVoiceText(sc.exp);
-}
-
-function _spotNext() {
-  _spotIdx++;
-  _renderSpotCard();
+  
+  fb.style.display = 'block';
 }
