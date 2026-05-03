@@ -33,6 +33,10 @@ function navigate(screen) {
   Voice.stop();
   AppState.screen = screen;
 
+  // Restore screen-container overflow when leaving EVM
+  const screenContainer = document.getElementById('screen-container');
+  if (screenContainer) screenContainer.style.overflowX = (screen === 'evm') ? 'visible' : '';
+
   // Show/hide screens
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const target = document.getElementById('screen-' + screen);

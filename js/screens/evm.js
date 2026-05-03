@@ -8,6 +8,10 @@ function renderEvm() {
   _evmVoted    = false;
   clearInterval(_blinkTimer);
 
+  // Allow BU SVG to be fully visible (main.css clips overflow-x)
+  const sc = document.querySelector('.screen-container');
+  if (sc) sc.style.overflowX = 'visible';
+
   const lang       = AppState.lang || 'mr';
   const candidates = t('evm_candidates');
   const el         = document.getElementById('screen-evm');
@@ -112,7 +116,7 @@ function renderEvm() {
           letter-spacing=".5">भारत निवडणूक आयोग  |  ELECTION COMMISSION OF INDIA</text>
         <!-- Candidate row dividers (4 candidates) -->
         ${candidates.map((c, i) => `
-          <line x1="2" y1="${BU_TOP + i*ROW_H}" x2="218" y2="${BU_TOP + i*ROW_H}"
+          <line x1="2" y1="${BU_TOP + i*ROW_H}" x2="238" y2="${BU_TOP + i*ROW_H}"
             stroke="#BFBBBB" stroke-width="1"/>
           <!-- Serial num box -->
           <rect x="4" y="${BU_TOP + i*ROW_H + 1}" width="22" height="${ROW_H - 1}"

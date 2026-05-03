@@ -254,8 +254,8 @@ body.font-lg{font-size:22px}
   display:flex; flex-direction:column;
   align-items:center;
   gap:10px;
-  padding:10px 4px 100px;
-  overflow-x:hidden;
+  padding:10px 2px 100px;
+  overflow:hidden;
 }
 
 /* Practice badge */
@@ -273,17 +273,16 @@ body.font-lg{font-size:22px}
   display:flex;
   align-items:flex-end;
   gap:0;
-  width:calc(100% + 8px);
-  max-width:448px;
+  width:100%;
+  max-width:100%;
   overflow:visible;
-  margin-right:-8px;
 }
 
 /* Control Unit container */
 .evm-cu-wrap{
   position:relative;
-  flex:0 0 38%;
-  width:38%;
+  flex:0 0 34%;
+  width:34%;
 }
 .evm-cu-svg{
   width:100%;
@@ -336,8 +335,8 @@ body.font-lg{font-size:22px}
 
 /* Cable SVG */
 .evm-cable-svg{
-  flex:0 0 18px;
-  width:18px;
+  flex:0 0 14px;
+  width:14px;
   height:auto;
   align-self:center;
   margin-bottom:25px;
