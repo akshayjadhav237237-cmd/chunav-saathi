@@ -492,10 +492,7 @@ body.font-lg{font-size:22px}
 .slip-seal{ font-size:5px; color:#888 }
 
 /* ── Status text ── */
-.evm-status-text{
-  font-size:13px; color:var(--text-secondary);
-  text-align:center; padding:0 12px;
-}
+.evm-status-text { margin-top: 16px; text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px; font-size: 14px; font-weight: 500; color: #222; min-height: 24px; border: 1px solid rgba(0,0,0,0.1); }
 
 /* ── Success overlay ── */
 .evm-success-overlay{
@@ -711,12 +708,7 @@ body.font-lg{font-size:22px}
   transform:perspective(900px) rotateX(4deg);
   transform-origin:top center;
 }
-.evm-bu-header{
-  background:var(--evm-blue);
-  text-align:center;
-  padding:6px 10px;
-  border-bottom:2px solid var(--evm-blue-lt);
-}
+.evm-bu-header { background: #1565C0; color: #ffffff; font-size: 11px; padding: 6px 12px; text-align: center; font-weight: 700; }
 .evm-bu-title-mr{
   color:#fff; font-size:11px;
   font-weight:700; letter-spacing:.04em;
@@ -966,7 +958,7 @@ body.font-lg{font-size:22px}
 .evm-lcd-line1{color:#00e676;font-size:var(--font-size-xs);font-family:monospace;letter-spacing:.05em}
 .evm-lcd-line2{color:#69f0ae;font-size:var(--font-size-body-lg);font-family:monospace;font-weight:bold}
 .evm-cu-buttons{display:flex;gap:var(--space-sm)}
-.evm-cu-btn{flex:1;background:#333;border-radius:6px;padding:var(--space-sm);text-align:center;opacity:.4}
+.evm-cu-btn { background: #bbb; color: #333; font-size: 8px; font-weight: bold; padding: 4px 8px; border-radius: 3px; border: 1px solid #999; }
 .evm-cu-btn.disabled{cursor:not-allowed}
 .evm-cu-btn-label{color:#ccc;font-size:var(--font-size-xs);font-weight:bold}
 .evm-cu-btn-note{color:#888;font-size:10px}
@@ -986,7 +978,7 @@ body.font-lg{font-size:22px}
 .vvpat-name{font-size:var(--font-size-sm);font-weight:bold;color:#000}
 .vvpat-party{font-size:11px;color:#555}
 .vvpat-eciseal{font-size:10px;color:#888;margin-top:4px}
-.evm-vvpat-label{color:#555;font-size:10px;text-align:center;letter-spacing:.08em}
+.evm-vvpat-label { text-align: center; font-size: 10px; color: #444; margin-top: 8px; font-weight: bold; }
 
 /* EVM Success Overlay */
 .evm-success-overlay{position:absolute;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:50;border-radius:var(--radius-md)}
@@ -1077,13 +1069,7 @@ button:focus, a:focus, [tabindex]:focus {
   position: relative;
 }
 
-.evm-cu-label {
-  text-align: center;
-  font-size: 10px;
-  color: #777;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-}
+.evm-cu-label { text-align: center; font-size: 10px; color: #333; letter-spacing: 1px; margin-bottom: 4px; }
 
 .evm-cu-lcd {
   width: 120px;
@@ -1120,14 +1106,7 @@ button:focus, a:focus, [tabindex]:focus {
   margin-top: 12px;
 }
 
-.evm-cu-btn {
-  background: #D8D4CC;
-  color: #777;
-  font-size: 8px;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 3px;
-}
+.evm-cu-btn { background: #bbb; color: #333; font-size: 8px; font-weight: bold; padding: 4px 8px; border-radius: 3px; border: 1px solid #999; }
 
 .evm-cu-led {
   width: 8px;
@@ -1152,40 +1131,20 @@ button:focus, a:focus, [tabindex]:focus {
   overflow: hidden;
 }
 
-.evm-bu-header {
-  background: #1565C0;
-  color: white;
-  font-size: 11px;
-  padding: 6px 12px;
-  text-align: center;
-}
+.evm-bu-header { background: #1565C0; color: #ffffff; font-size: 11px; padding: 6px 12px; text-align: center; font-weight: 700; }
 
 .evm-bu-rows {
   display: flex;
   flex-direction: column;
 }
 
-.evm-bu-row {
-  display: flex;
-  align-items: center;
-  padding: 10px 12px;
-  border-bottom: 1px solid #ccc;
-  background: white;
-  gap: 8px;
-}
+.evm-bu-row { display: flex; align-items: center; padding: 10px 12px; border-bottom: 1px solid #ccc; background: #ffffff; gap: 8px; }
 
 .evm-bu-row:last-child {
   border-bottom: none;
 }
 
-.evm-bu-serial {
-  width: 24px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  flex-shrink: 0;
-  text-align: center;
-}
+.evm-bu-serial { width: 24px; font-size: 14px; font-weight: bold; color: #111; flex-shrink: 0; text-align: center; }
 
 .evm-bu-symbol {
   font-size: 20px;
@@ -1201,21 +1160,9 @@ button:focus, a:focus, [tabindex]:focus {
   overflow: hidden;
 }
 
-.evm-bu-name {
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.evm-bu-name { font-size: 14px; font-weight: 700; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.evm-bu-party {
-  font-size: 11px;
-  color: #666;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.evm-bu-party { font-size: 11px; color: #444; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .evm-bu-dot {
   width: 10px;
@@ -1226,20 +1173,7 @@ button:focus, a:focus, [tabindex]:focus {
   transition: background 0.3s;
 }
 
-.evm-bu-vote-btn {
-  width: 56px;
-  height: 36px;
-  background: #1565C0;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  flex-shrink: 0;
-  box-shadow: 0 3px 0 #0D47A1;
-  transition: transform 0.1s;
-}
+.evm-bu-vote-btn { width: 56px; height: 36px; background: #1565C0; color: #ffffff; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; box-shadow: 0 3px 0 #0D47A1; transition: transform 0.1s; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 
 .evm-bu-vote-btn:active {
   transform: translateY(2px);
@@ -1257,16 +1191,7 @@ button:focus, a:focus, [tabindex]:focus {
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-.evm-vvpat-header {
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-  color: white;
-  background: #1A3A8F;
-  margin: -12px -12px 12px -12px;
-  padding: 6px;
-  border-radius: 12px 12px 0 0;
-}
+.evm-vvpat-header { text-align: center; font-size: 12px; font-weight: 700; color: #ffffff; background: #1A3A8F; margin: -12px -12px 12px -12px; padding: 6px; border-radius: 12px 12px 0 0; }
 
 .evm-vvpat-window {
   width: 160px;
@@ -1282,9 +1207,10 @@ button:focus, a:focus, [tabindex]:focus {
   justify-content: center;
 }
 
-.evm-vvpat-label {
-  text-align: center;
-  font-size: 10px;
-  color: #777;
-  margin-top: 8px;
-}
+.evm-vvpat-label { text-align: center; font-size: 10px; color: #444; margin-top: 8px; font-weight: bold; }
+
+.evm-cu-bel { text-align: center; font-size: 8px; color: #666; margin-bottom: 4px; font-weight: bold; }
+.evm-bu-label { text-align: center; font-size: 10px; color: #333; font-weight: 700; letter-spacing: 1px; padding: 6px; background: #c8c2b5; margin-top: auto; }
+.evm-reset-btn { background: #1565C0; color: #ffffff; font-weight: 700; font-size: 15px; border: none; border-radius: 8px; padding: 12px 24px; margin: 16px auto 0 auto; display: block; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3); box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.3s; }
+.evm-reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.evm-vvpat-led { width: 6px; height: 6px; border-radius: 50%; background: #555; position: absolute; top: 18px; left: 24px; transition: background 0.3s, box-shadow 0.3s; }

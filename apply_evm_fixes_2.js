@@ -1,4 +1,6 @@
-// CHUNAV SAATHI — evm.js 
+const fs = require('fs');
+
+const evmJsContent = `// CHUNAV SAATHI — evm.js 
 let _evmSelected = null;
 let _evmVoted    = false;
 let _blinkTimer  = null;
@@ -16,7 +18,7 @@ function renderEvm() {
   const candidates = typeof CONTENT !== 'undefined' ? (CONTENT[lang] && CONTENT[lang].evm_candidates) || CONTENT['mr'].evm_candidates : [];
   const el         = document.getElementById('screen-evm');
 
-  el.innerHTML = `
+  el.innerHTML = \`
 <div class="evm-page-new">
 
   <div class="evm-practice-badge">🔴 सराव मोड / PRACTICE MODE</div>
@@ -41,18 +43,18 @@ function renderEvm() {
   <div class="evm-new-bu">
     <div class="evm-bu-header">भारत निवडणूक आयोग | ELECTION COMMISSION OF INDIA</div>
     <div class="evm-bu-rows">
-      ${candidates.map((c, i) => `
+      \${candidates.map((c, i) => \`
         <div class="evm-bu-row">
-          <div class="evm-bu-serial">${c.num}</div>
-          <div class="evm-bu-symbol">${c.symbol}</div>
+          <div class="evm-bu-serial">\${c.num}</div>
+          <div class="evm-bu-symbol">\${c.symbol}</div>
           <div class="evm-bu-name-wrap">
-            <div class="evm-bu-name">${c.name}</div>
-            <div class="evm-bu-party">${c.party}</div>
+            <div class="evm-bu-name">\${c.name}</div>
+            <div class="evm-bu-party">\${c.party}</div>
           </div>
-          <div class="evm-bu-dot" id="html-dot-${i}"></div>
-          <button class="evm-bu-vote-btn" onclick="evmPress(${i})" aria-label="Vote for ${c.name}">VOTE</button>
+          <div class="evm-bu-dot" id="html-dot-\${i}"></div>
+          <button class="evm-bu-vote-btn" onclick="evmPress(\${i})" aria-label="Vote for \${c.name}">VOTE</button>
         </div>
-      `).join('')}
+      \`).join('')}
     </div>
     <div class="evm-bu-label">BALLOT UNIT</div>
   </div>
@@ -106,11 +108,11 @@ function renderEvm() {
   </div>
 
   <!-- STATUS -->
-  <div class="evm-status-text" id="evm-status">${typeof t === 'function' ? t('evm_instruction') : ''}</div>
+  <div class="evm-status-text" id="evm-status">\${typeof t === 'function' ? t('evm_instruction') : ''}</div>
   
-  <button id="evm-reset-btn" class="evm-reset-btn" onclick="evmReset()" style="display:none;">${typeof t === 'function' ? t('evm_reset') : 'Reset'}</button>
+  <button id="evm-reset-btn" class="evm-reset-btn" onclick="evmReset()" style="display:none;">\${typeof t === 'function' ? t('evm_reset') : 'Reset'}</button>
 
-</div>`;
+</div>\`;
 
   const cuLed = document.getElementById('html-cu-led');
   if (cuLed) { cuLed.style.backgroundColor = '#00ff00'; }
@@ -263,16 +265,16 @@ function _evmShowSlip(c) {
     const lang = AppState.lang || 'mr';
     const successMsg = lang === 'en' ? 'Vote cast successfully!' : lang === 'hi' ? 'वोट सफलतापूर्वक दर्ज किया गया!' : 'मत यशस्वीरित्या नोंदले गेले!';
     if (status) {
-      status.innerHTML = `
+      status.innerHTML = \`
         <div style="font-size:22px;">🎉</div>
         <div style="font-weight:bold;
           color:#1565C0;font-size:15px;
           margin:4px 0;">
-          ${c.symbol} ${c.name}
+          \${c.symbol} \${c.name}
         </div>
         <div style="font-size:12px;color:#444;">
-          ${successMsg}
-        </div>`;
+          \${successMsg}
+        </div>\`;
     }
     
     // Show reset button
@@ -298,3 +300,49 @@ function _evmShowSlip(c) {
  * @returns {void}
  */
 function evmReset() { renderEvm(); }
+`;
+fs.writeFileSync('js/screens/evm.js', evmJsContent);
+
+// Fix colors in css/screens.css
+let css = fs.readFileSync('css/screens.css', 'utf8');
+
+css = css.replace(/\.evm-cu-label\s*{[^}]+}/g, '.evm-cu-label { text-align: center; font-size: 10px; color: #333; letter-spacing: 1px; margin-bottom: 4px; }');
+
+if (!css.includes('.evm-cu-bel')) {
+  css += '\n.evm-cu-bel { text-align: center; font-size: 8px; color: #666; margin-bottom: 4px; font-weight: bold; }';
+}
+
+css = css.replace(/\.evm-cu-btn\s*{[^}]+}/g, '.evm-cu-btn { background: #bbb; color: #333; font-size: 8px; font-weight: bold; padding: 4px 8px; border-radius: 3px; border: 1px solid #999; }');
+
+css = css.replace(/\.evm-bu-header\s*{[^}]+}/g, '.evm-bu-header { background: #1565C0; color: #ffffff; font-size: 11px; padding: 6px 12px; text-align: center; font-weight: 700; }');
+
+css = css.replace(/\.evm-bu-row\s*{[^}]+}/g, '.evm-bu-row { display: flex; align-items: center; padding: 10px 12px; border-bottom: 1px solid #ccc; background: #ffffff; gap: 8px; }');
+
+css = css.replace(/\.evm-bu-serial\s*{[^}]+}/g, '.evm-bu-serial { width: 24px; font-size: 14px; font-weight: bold; color: #111; flex-shrink: 0; text-align: center; }');
+
+css = css.replace(/\.evm-bu-name\s*{[^}]+}/g, '.evm-bu-name { font-size: 14px; font-weight: 700; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }');
+
+css = css.replace(/\.evm-bu-party\s*{[^}]+}/g, '.evm-bu-party { font-size: 11px; color: #444; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }');
+
+css = css.replace(/\.evm-vvpat-header\s*{[^}]+}/g, '.evm-vvpat-header { text-align: center; font-size: 12px; font-weight: 700; color: #ffffff; background: #1A3A8F; margin: -12px -12px 12px -12px; padding: 6px; border-radius: 12px 12px 0 0; }');
+
+css = css.replace(/\.evm-vvpat-label\s*{[^}]+}/g, '.evm-vvpat-label { text-align: center; font-size: 10px; color: #444; margin-top: 8px; font-weight: bold; }');
+
+if (!css.includes('.evm-bu-label')) {
+  css += '\n.evm-bu-label { text-align: center; font-size: 10px; color: #333; font-weight: 700; letter-spacing: 1px; padding: 6px; background: #c8c2b5; margin-top: auto; }';
+}
+
+css = css.replace(/\.evm-bu-vote-btn\s*{[^}]+}/g, '.evm-bu-vote-btn { width: 56px; height: 36px; background: #1565C0; color: #ffffff; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; box-shadow: 0 3px 0 #0D47A1; transition: transform 0.1s; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }');
+
+if (!css.includes('.evm-reset-btn')) {
+  css += '\n.evm-reset-btn { background: #1565C0; color: #ffffff; font-weight: 700; font-size: 15px; border: none; border-radius: 8px; padding: 12px 24px; margin: 16px auto 0 auto; display: block; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3); box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.3s; }\n.evm-reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }';
+}
+
+css = css.replace(/\.evm-status-text\s*{[^}]+}/g, '.evm-status-text { margin-top: 16px; text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px; font-size: 14px; font-weight: 500; color: #222; min-height: 24px; border: 1px solid rgba(0,0,0,0.1); }');
+
+if (!css.includes('.evm-vvpat-led')) {
+  css += '\n.evm-vvpat-led { width: 6px; height: 6px; border-radius: 50%; background: #555; position: absolute; top: 18px; left: 24px; transition: background 0.3s, box-shadow 0.3s; }';
+}
+
+fs.writeFileSync('css/screens.css', css);
+console.log('Update complete.');
