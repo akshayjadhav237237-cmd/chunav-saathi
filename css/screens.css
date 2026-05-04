@@ -1044,3 +1044,247 @@ button:focus, a:focus, [tabindex]:focus {
   white-space: nowrap;
   border: 0;
 }
+
+
+/* ═══════════════════════════════════════════
+   NEW EVM LAYOUT (FULLY FLEX-BASED, VERTICAL)
+════════════════════════════════════════════ */
+
+.evm-page-new {
+  padding: 12px;
+  overflow-y: auto;
+  max-height: calc(100vh - 130px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.evm-practice-badge {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #d32f2f;
+  margin-bottom: 12px;
+}
+
+/* CONTROL UNIT */
+.evm-new-cu {
+  width: 100%;
+  max-width: 340px;
+  background: #e8e4dc;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 0 auto 8px auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.evm-cu-label {
+  text-align: center;
+  font-size: 10px;
+  color: #777;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.evm-cu-lcd {
+  width: 120px;
+  height: 50px;
+  background: #1a0000;
+  border: 3px solid #8B0000;
+  border-radius: 6px;
+  margin: 8px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.evm-cu-lcd .evm-lcd-digits {
+  color: red;
+  font-size: 24px;
+  font-family: monospace;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.evm-cu-lcd .evm-lcd-sub {
+  color: red;
+  font-size: 10px;
+  font-family: monospace;
+  opacity: 0.8;
+}
+
+.evm-cu-btns {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.evm-cu-btn {
+  background: #D8D4CC;
+  color: #777;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 3px;
+}
+
+.evm-cu-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ff00;
+  box-shadow: 0 0 6px #00ff00;
+  position: absolute;
+  top: 12px;
+  left: 16px;
+}
+
+/* BALLOT UNIT */
+.evm-new-bu {
+  width: 100%;
+  max-width: 340px;
+  background: #e8e4dc;
+  border-radius: 12px;
+  padding: 0;
+  margin: 0 auto 8px auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+.evm-bu-header {
+  background: #1565C0;
+  color: white;
+  font-size: 11px;
+  padding: 6px 12px;
+  text-align: center;
+}
+
+.evm-bu-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.evm-bu-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #ccc;
+  background: white;
+  gap: 8px;
+}
+
+.evm-bu-row:last-child {
+  border-bottom: none;
+}
+
+.evm-bu-serial {
+  width: 24px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.evm-bu-symbol {
+  font-size: 20px;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.evm-bu-name-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.evm-bu-name {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.evm-bu-party {
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.evm-bu-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cc0000;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+.evm-bu-vote-btn {
+  width: 56px;
+  height: 36px;
+  background: #1565C0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 3px 0 #0D47A1;
+  transition: transform 0.1s;
+}
+
+.evm-bu-vote-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #0D47A1;
+}
+
+/* VVPAT UNIT */
+.evm-new-vvpat {
+  width: 100%;
+  max-width: 340px;
+  background: #e8e4dc;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.evm-vvpat-header {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  background: #1A3A8F;
+  margin: -12px -12px 12px -12px;
+  padding: 6px;
+  border-radius: 12px 12px 0 0;
+}
+
+.evm-vvpat-window {
+  width: 160px;
+  height: 70px;
+  background: #111;
+  border-radius: 4px;
+  margin: 8px auto;
+  border: 2px solid #555;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.evm-vvpat-label {
+  text-align: center;
+  font-size: 10px;
+  color: #777;
+  margin-top: 8px;
+}
